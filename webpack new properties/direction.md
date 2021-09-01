@@ -22,6 +22,13 @@
    - chunk 代码块名称的生成规则 deterministic，根据文件的路径和文件名生成 hash 值，有助于长期缓存，取代之前根据 natural 生成的 1.js、2.js
    - 开发环境默认是 named；生产环境默认是 deterministic
 
+   | Key           | Value                          | Eg         |
+   | ------------- | ------------------------------ | ---------- |
+   | natural       | 按引用顺序的数字               | 1.js，2.js |
+   | deterministic | 根据模块名称生成的简短 hash 值 | 803.js     |
+   | named         | 包含文件路径的名称             | src_A.js   |
+   | :--------:    | -------------:                 |
+
 4. 新版 tree shaking（重要）
 
 5. nodeJs 的 polyfill 脚本被移除
@@ -52,11 +59,3 @@ npm i webpack webpack-cli webpack-dev-server html-webpack-plugin babel-loader @b
 
 npm i react react-dom --save
 ```
-
-| 项目       | Value          |
-| ---------- | -------------- |
-| 电脑       | $1600          |
-| 手机       | $12            |
-| 导管       | $1             |
-| Column 1   | Column 2       |
-| :--------: | -------------: |
