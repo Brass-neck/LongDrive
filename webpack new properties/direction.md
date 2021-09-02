@@ -22,6 +22,8 @@
    - chunk 代码块名称的生成规则 deterministic，根据文件的路径和文件名生成 hash 值，有助于长期缓存，取代之前根据 natural 生成的 1.js、2.js
    - 开发环境默认是 named；生产环境默认是 deterministic
 
+   <br>
+
    | Key           | Value                          | Eg         |
    | ------------- | ------------------------------ | ---------- |
    | natural       | 按引用顺序的数字               | 1.js，2.js |
@@ -29,11 +31,14 @@
    | named         | 包含文件路径的名称             | src_A.js   |
    | :--------:    | -------------:                 |
 
+<br>
+
 4. 新版 tree shaking（重要）
 
 5. nodeJs 的 polyfill 脚本被移除
 
    - 如果使用内置的 nodejs 模块，webpack4 默认会引入 polyfill，webpack5 不会，需要手动配置 resolve 属性
+   - webpack 作者是写后端的，一开始把 node 的 polyfill 都包含进来了，后来发现 webpack 多数被用于打包前端项目，用不到 node polyfill，所以剔除
 
 6. 联邦模块（重要）
 
@@ -42,6 +47,8 @@
    - experiments
    - w5 支持在请求中处理协议
    - 支持 data 支持 base64 或原始编码，**MimeType** 可以在 **module.rule** 中被映射到加载器和模块类型
+
+   <br>
 
    ```javacript
    import data from 'data:text/javascript, export default 'titile''
