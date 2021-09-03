@@ -35,12 +35,43 @@
 
 4. 新版 tree shaking（重要）
 
+   - 在打包的时候剔除没有用到的代码
+   - w4 的 tree shaking 很简单，主要是看 import 进来的变量有没有在这个模块出现过
+   - w5 根据作用域之间的关系进行优化
+   - 它依赖于 ES6 中的 import 和 export 语句，用来检测代码模块是否被导出、导入，且被 Javascript 文件使用
+   - 通过配置 optimization 中的 usedExports 和 minimize 优化功能实现 Tree Shaking，生产模式 production 下会自动使用
+
 5. nodeJs 的 polyfill 脚本被移除
 
    - 如果使用内置的 nodejs 模块，webpack4 默认会引入 polyfill，webpack5 不会，需要手动配置 resolve 属性
    - webpack 作者是写后端的，一开始把 node 的 polyfill 都包含进来了，后来发现 webpack 多数被用于打包前端项目，用不到 node polyfill，所以剔除
 
 6. 联邦模块（重要）
+
+   - 为了不同开发小组间共同开发一个或者多个应用，一个应用可以被拆分成多个小的应用分给不同小组的人开发
+   - 每个小的应用块都是**独立构建**的，这些构建都将编译为容器，容器可以被 其他容器 或者 其他应用 使用
+   - 被引用的容器称为 **remote**，引用者称为**host**，remote 暴露模块给 host，host 可以使用这些暴露的模块
+
+<br>
+
+```
+remote：一个react项目
+
+index.js 入口
+|
+| 异步引用
+| import(./bootstrap.js)
+∨
+bootstrap.js
+|
+| 引用
+∨
+App.js
+
+const remoteButton = React.lazy(() => import('remote/Button'))
+等价于下面的webpack5新语法TopAwait  0  vop[]\
+const remoteButton = await import('remote/Button')
+```
 
 7. URIs
 

@@ -1,6 +1,9 @@
 const path = require('path')
 const HtmlWebapckPlugin = require('html-webpack-plugin')
 
+// 联邦模块插件
+const ModuleFederationPlugin = require('webpack').container.ModuleFederationPlugin
+
 module.exports = {
   mode: 'development',
   devtool: false,
@@ -55,15 +58,46 @@ module.exports = {
     moduleIds: 'natural',
 
     // 代码块名称的生成规则
-    chunkIds: 'natural'
+    chunkIds: 'natural',
+
+    /**
+     * tree shaking配置
+     *
+     * usedExports 负责标记「枯树叶、枯树枝」
+     * minimize 负责「摇掉」它们
+     */
+    usedExports: true // 在打包结果中标识 未用到的导出 unused harmony export，标识后，方便minimize剔除代码
   },
 
   /**
    * 手动配置polyfill
+   * 以下是 webpack 在 webpack 5 之前使用过的 polyfill 包列表：
    */
   resolve: {
     fallback: {
-      stream: require.resolve('stream-browserify/')
+      assert: require.resolve('assert'),
+      buffer: require.resolve('buffer'),
+      console: require.resolve('console-browserify'),
+      constants: require.resolve('constants-browserify'),
+      crypto: require.resolve('crypto-browserify'),
+      domain: require.resolve('domain-browser'),
+      events: require.resolve('events'),
+      http: require.resolve('stream-http'),
+      https: require.resolve('https-browserify'),
+      os: require.resolve('os-browserify/browser'),
+      path: require.resolve('path-browserify'),
+      punycode: require.resolve('punycode'),
+      process: require.resolve('process/browser'),
+      querystring: require.resolve('querystring-es3'),
+      stream: require.resolve('stream-browserify'),
+      string_decoder: require.resolve('string_decoder'),
+      sys: require.resolve('util'),
+      timers: require.resolve('timers-browserify'),
+      tty: require.resolve('tty-browserify'),
+      url: require.resolve('url'),
+      util: require.resolve('util'),
+      vm: require.resolve('vm-browserify'),
+      zlib: require.resolve('browserify-zlib')
     }
   },
 
@@ -112,5 +146,29 @@ module.exports = {
   devServer: {
     contentBase: path.resolve(__dirname, 'dist')
   },
-  plugins: [new HtmlWebapckPlugin({ template: './src/index.html' })]
+  plugins: [
+    new HtmlWebapckPlugin({ template: './src/index.html' }),
+
+    // 联邦模块配置
+    new ModuleFederationPlugin({
+      // 向外暴露的全局变量名
+      name: 'globalName',
+
+      // 打包出的文件名，作为 remote 时，被引用的文件
+      filename: 'remoteEntry.js',
+
+      // 作为 remote 时，要暴露给host使用的模块
+      exposes: {
+        button: './src/button'
+      },
+
+      // 作为 Host 时，去消费哪些 Remote
+      remotes: {
+        remote: 'globalName@http://localhost:8080/remoteEntry.js'
+      },
+
+      // 优先用 Host 的哪些依赖，如果 Host 没有，再用自己的
+      shared: ['react', 'react-dom']
+    })
+  ]
 }
