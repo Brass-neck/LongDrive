@@ -20,6 +20,24 @@ vue2 中使用 `data、computed、methods、watch` 组件选项来组织逻辑�
 
 - 在`setup`中注册钩子函数，名称与 2.0 相同，但前缀为 `on`，即 `mounted` 会写为 `onMounted`
 
+- `setup`中可以返回一个**渲染函数**
+
+```javascript
+import { h, ref, reactive } from 'vue'
+export default {
+  setup() {
+    const num = ref(0)
+    const obj = reactive({
+      number: 1
+    })
+
+    // 请注意这里我们需要显式调用 ref 的 value
+    // 可以直接使用 同一作用域中 声明的响应式状态
+    return () => h('div', [num.value, obj.number])
+  }
+}
+```
+
 <hr>
 
 ### props
