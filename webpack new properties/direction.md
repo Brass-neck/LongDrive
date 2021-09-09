@@ -69,7 +69,7 @@ bootstrap.js
 App.js
 
 const remoteButton = React.lazy(() => import('remote/Button'))
-等价于下面的webpack5新语法TopAwait  0  vop[]\
+等价于下面的webpack5新语法TopAwait
 const remoteButton = await import('remote/Button')
 ```
 

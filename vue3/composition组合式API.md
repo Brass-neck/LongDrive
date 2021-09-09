@@ -79,6 +79,7 @@ setup(props) {
 export default {
   setup(props, context) {
     // Attribute (非响应式对象)
+    // attrs：父组件传递过来的 且 没有被 props字段接收的属性
     console.log(context.attrs)
 
     // 插槽 (非响应式对象)
@@ -194,8 +195,9 @@ state.attrs.className = 'header' // logs: 'header' ''
 
 ### computed 计算属性
 
-- `computed`参数是一个类似 `getter`的回调函数，输出一个`只读的响应式引用`
+- `computed`参数是一个类似 `getter`的回调函数，输出一个不可变的**只读的**响应式引用
 - 访问计算属性值，需要`.value`
+- 参数还可以接受一个定义了 `set`和`get`的对象，返回一个**可写的**响应式`ref`对象
 
 <br>
 
@@ -205,12 +207,34 @@ import { computed, ref } from 'vue'
 export default {
   setup(props) {
     const num = ref(1)
+    // 这是一个不可写，只读的computed对象
     const computedNum = computed(() => num.value * 2)
 
     // 使用 .value 获取值
     console.log(computedNum.value)
+
+    // 参数为定义get和set的对象
+    const gsComputed = computed({
+      get: () => num.value + 1,
+      set: (val) => num.value - 1
+    })
+    // 这是一个可写的computed对象
+    gsComputed.value = 10
   }
 }
+```
+
+类型声明
+
+```typescript
+// 只读的
+function computed<T>(getter: () => T, debuggerOptions?: DebuggerOptions): Readonly<Ref<Readonly<T>>>
+
+// 可写的
+function computed<T>(
+  options: { get: () => T; set: (val: T) => void },
+  debuggerOptions?: DebuggerOptions
+): Ref<T>
 ```
 
 <hr>
