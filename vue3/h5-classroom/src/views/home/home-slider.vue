@@ -28,12 +28,10 @@ export default defineComponent({
     let sliders = computed(() => store.state.home.sliders);
 
     // 缓存，没有数据才请求
-    let realSliders;
     if (!sliders.value.length) {
       await store.dispatch(`home/${Types.SET_SLIDERS}`);
-      realSliders = sliders.value.map(e => require("../../assets/" + e.url));
     }
-
+    let realSliders = sliders.value.map(e => require("../../assets/" + e.url));
     return {
       sliders,
       realSliders

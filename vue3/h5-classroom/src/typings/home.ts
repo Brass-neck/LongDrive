@@ -10,6 +10,7 @@ export interface ISlider {
 }
 
 export interface ILesson {
+  id: number
   title: string
   video: string
   poster: string

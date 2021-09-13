@@ -1,10 +1,11 @@
+import { ILessons } from './../../typings/home'
 import { CATEGORY_TYPES, IHomeState, ISlider } from '@/typings/home'
 import { Module } from 'vuex'
 import { IGlobalState } from '..'
 
 // 引入所有动作名称
 import * as Types from '../action-types'
-import { getSliders } from '../../api/home'
+import { getSliders, getLessons } from '../../api/home'
 
 // 首页里应该存哪些属性
 const state: IHomeState = {
@@ -39,6 +40,14 @@ const home: Module<IHomeState, IGlobalState> = {
     },
     [Types.SET_SLIDERS](state, sliders: ISlider[]) {
       state.sliders = sliders
+    },
+    [Types.SET_LOADING](state, payload: boolean) {
+      state.lessons.loading = payload
+    },
+    [Types.SET_COURSES_LIST](state, payload: ILessons) {
+      state.lessons.list = state.lessons.list.concat(payload.list)
+      state.lessons.hasMore = payload.hasMore
+      state.lessons.offset += payload.list.length
     }
   },
 
@@ -48,6 +57,18 @@ const home: Module<IHomeState, IGlobalState> = {
       let sliders = await getSliders()
       // 提交到mutations中去
       commit(Types.SET_SLIDERS, sliders)
+    },
+    async [Types.SET_COURSES_LIST]({ commit }) {
+      if (state.lessons.loading || !state.lessons.hasMore) return
+
+      // 开始加载
+      commit(Types.SET_LOADING, true)
+
+      let res = await getLessons(state.currentCategory, state.lessons.offset, state.lessons.limit)
+
+      commit(Types.SET_COURSES_LIST, res)
+      // 加载完毕
+      commit(Types.SET_LOADING, false)
     }
   }
 }
