@@ -1,9 +1,10 @@
-import { CATEGORY_TYPES, IHomeState } from '@/typings'
+import { CATEGORY_TYPES, IHomeState, ISlider } from '@/typings/home'
 import { Module } from 'vuex'
 import { IGlobalState } from '..'
 
 // 引入所有动作名称
 import * as Types from '../action-types'
+import { getSliders } from '../../api/home'
 
 // 首页里应该存哪些属性
 const state: IHomeState = {
@@ -32,9 +33,21 @@ const home: Module<IHomeState, IGlobalState> = {
   namespaced: true,
   state,
   mutations: {
-    // state是最新状态，payload是要改的分类
+    // state是模块局部的最新状态，payload是要改的分类
     [Types.SET_CATEGORY](state, payload: CATEGORY_TYPES) {
       state.currentCategory = payload
+    },
+    [Types.SET_SLIDERS](state, sliders: ISlider[]) {
+      state.sliders = sliders
+    }
+  },
+
+  // actions中异步获取数据，然后commit到mutations修改state中的数据
+  actions: {
+    async [Types.SET_SLIDERS]({ commit }) {
+      let sliders = await getSliders()
+      // 提交到mutations中去
+      commit(Types.SET_SLIDERS, sliders)
     }
   }
 }

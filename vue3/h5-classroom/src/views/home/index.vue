@@ -2,8 +2,14 @@
   <div class="home">
     <!-- 头部 -->
     <home-header :category="category" @setCurrentCategory="setCurrentCategory"></home-header>
+
     <!-- 轮播图 -->
-    <home-slider></home-slider>
+    <Suspense>
+      <template #default>
+        <home-slider></home-slider>
+      </template>
+      <template #fallback> loading </template>
+    </Suspense>
 
     <!-- 列表 -->
     <home-list></home-list>
@@ -19,17 +25,16 @@ import HomeList from "./home-list.vue";
 import HomeSlider from "./home-slider.vue";
 
 import { IGlobalState } from "../../store/index";
-import { CATEGORY_TYPES } from "../../typings/index";
+import { CATEGORY_TYPES } from "../../typings/home";
 import * as Types from "../../store/action-types";
 
-//todo: Store<IGlobalState>泛型？
 // 功能可以提取到hooks中去
 function useCategory(store: Store<IGlobalState>) {
   let category = computed(() => store.state.home.currentCategory);
 
   function setCurrentCategory(category: CATEGORY_TYPES) {
     // 把最新category提交到home模块下
-    store.commit(`/home/${Types.SET_CATEGORY}`, category);
+    store.commit(`home/${Types.SET_CATEGORY}`, category);
   }
   return {
     category,

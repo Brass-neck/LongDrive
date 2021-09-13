@@ -1,6 +1,6 @@
 import { createStore } from 'vuex'
 import home from './modules/home'
-import { IHomeState } from '@/typings'
+import { IHomeState } from '@/typings/home'
 
 // 所有模块的state集合
 export interface IGlobalState {
