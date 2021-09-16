@@ -1,10 +1,13 @@
 import { isSymbol, isObject, isArray, isInteger, hasOwnProperty, hasChanged } from '../utils/index'
 import { reactive } from './reactive'
+
 /**
  * 2、可能会产生多种set和get，所以使用工厂函数
  */
 function createGetter() {
   return function get(target, key, receiver) {
+    console.log('执行了取值操作')
+
     const res = Reflect.get(target, key, receiver) // 就相当于获取target[key]
     if (isSymbol(key)) {
       return res
@@ -12,11 +15,14 @@ function createGetter() {
 
     // 如果取出的值是对象，需要递归进行再次代理
     if (isObject(res)) return reactive(res)
+
     // 依赖收集
+    track(target, key)
 
     return res
   }
 }
+
 function createSetter() {
   return function set(target, key, value, receiver) {
     // vue2不支持新增属性，只支持修改属性

@@ -10,12 +10,16 @@
     <script src="../dist/vue.js"></script>
     <!-- <script src="../node_modules/@vue/reactivity/dist/reactivity.global.js"></script> -->
     <script>
-      const { reactive } = VueReactivity
+      const { reactive, effect } = VueReactivity
 
-      const state = reactive([1, 2, 3])
+      const state = reactive({ name: 'ff', age: 19 })
+
+      effect(() => {
+        let str = state.name + state.age
+      })
 
       setTimeout(() => {
-        state[1] = 1000
+        // state[1] = 1000
       }, 1000)
     </script>
   </body>
