@@ -41,6 +41,25 @@
    - 它依赖于 ES6 中的 import 和 export 语句，用来检测代码模块是否被导出、导入，且被 Javascript 文件使用
    - 通过配置 optimization 中的 usedExports 和 minimize 优化功能实现 Tree Shaking，生产模式 production 下会自动使用
 
+   - tree shaking 只对 **ES Module** 起作用，对 **commonjs** 和 **umd** 无效（因为 tree shake 是针对静态结构进行分析，只有`import`和`export`是静态导入导出，而 commonjs 有动态导入导出，无法进行静态分析，比如下列代码）
+
+   ```javascript
+   // 动态导入，运行时才知道的导入内容
+   var my_lib
+   if (Math.random()) {
+     my_lib = require('foo')
+   } else {
+     my_lib = require('bar')
+   }
+
+   // 动态导出，运行时才知道的导出的内容
+   if (Math.random()) {
+     exports.baz = function baz() {}
+   }
+   ```
+
+   另外，`babel`编译默认转为 commonjs，需要配置`.babelrc`的{module: false}和 `package.json` 的{sideEffects: false}才可以进行 tree shaking
+
 5. nodeJs 的 polyfill 脚本被移除
 
    - 如果使用内置的 nodejs 模块，webpack4 默认会引入 polyfill，webpack5 不会，需要手动配置 resolve 属性
