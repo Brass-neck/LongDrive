@@ -59,13 +59,13 @@ let options = {
 let req = http.request(options, function (res) {
   res.setEncoding('utf8')
   res.on('err', function (err) {
-    console.log(err) //一段html代码
+    console.log(err)
   })
   res.on('data', function (data) {
-    console.log('data:', data) //一段html代码
+    console.log('data:', data)
   })
   res.on('end', function (data) {
-    console.log('data:', data) //一段html代码
+    console.log('data:', data)
   })
 })
 
