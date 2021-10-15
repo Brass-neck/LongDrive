@@ -35,3 +35,33 @@ npm i @vue/reactivity
 <hr>
 
 ## keypoints record
+
+### reactive
+
+1. 有缓存直接返回缓存，没有缓存使用 `new Proxy` 创建新代理，并设置在 `WeakMap` 弱引用缓存 map 中
+2. `new Proxy(target, baseHandler)`，baseHandler 是一个包含方法的对象{get, set}，get、set 都是通过工厂函数 return function 创造的，内部使用了 `Reflect`
+3. 属性在 `effect` 里被使用，进行依赖的双向收集
+
+   i. 会走 effect 方法，定义 effectStack，给 effect 唯一递增 id，effect.deps 收集相关的对象和 key
+
+   ii. 同时会触发属性的 get ，然后触发`track`进行依赖收集，用一个 `weakMap`以 obj: { key: [effect] } 的形式，存放 reactive(obj)中的 obj 和 effect 中被使用的属性 key，以及依赖的 effect 的关系
+
+4. 处理数组的特殊情况
+
+### ref
+
+- ref 把一个普通值变成 一个引用类型，成为响应式的，vue3 会使用 `defineProperty` 把这个变量定义在一个对象上
+
+- 参数支持普通值、对象
+
+```javascript
+let isShow = ref(true)
+
+effect(() => {
+  console.log(isShow.value)
+})
+
+setTimeout(() => {
+  isShow.value = false
+}, 1000)
+```

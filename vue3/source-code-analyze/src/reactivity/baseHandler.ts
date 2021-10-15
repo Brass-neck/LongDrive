@@ -1,4 +1,5 @@
 import { isSymbol, isObject, isArray, isInteger, hasOwnProperty, hasChanged } from '../utils/index'
+import { track, trigger } from './effect'
 import { reactive } from './reactive'
 
 /**
@@ -37,8 +38,10 @@ function createSetter() {
 
     if (!hasKey) {
       console.log('新增')
+      trigger(target, 'add', key, value)
     } else if (hasChanged(value, oldValue)) {
       console.log('修改')
+      trigger(target, 'set', key, value, oldValue)
     }
     // Reflect.set返回boolean，可以判断是否修改成功
     const res = Reflect.set(target, key, value, receiver) // target[key] = value
