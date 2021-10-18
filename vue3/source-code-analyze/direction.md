@@ -54,6 +54,8 @@ npm i @vue/reactivity
 
 - 参数支持普通值、对象
 
+- 总是需要 `.value` 调用，因为普通值变为响应式，需要包一层对象
+
 ```javascript
 let isShow = ref(true)
 
@@ -96,4 +98,28 @@ const { name, age } = toRefs(proxy)
 
 const proxy2 = reactive([1, 2, 3, 4])
 const [a, b, c, d] = proxy2
+```
+
+### computed
+
+- 使用的时候需要 `.value` ，因为普通值变为响应式，肯定要包一层对象，把值放到 `value` 属性上
+
+- 里面可以是一个函数，可以是一个定义了 set、get 的对象
+
+- 计算属性可以收集依赖 effect
+
+- 计算属性本身也是一个 effect ，它与内部依赖的属性建立了关系，但是一个惰性的 effect，只有取值的时候才执行
+
+```javascript
+const person = reactive({ name: 'z', age: 12 })
+
+// 计算属性本身也是一个 effect ，它与内部依赖的属性建立了关系，age会收集计算属性的effect
+let newAge = computed(() => {
+  return person.age * 2
+})
+
+// 计算属性可以收集依赖 effect，这个计算属性依赖了这个effect
+effect(() => {
+  console.log(newAge.value)
+})
 ```

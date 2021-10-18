@@ -74,7 +74,7 @@ function createReactiveEffect(fn, options) {
   effect.id = uid++
   // effect中依赖了哪些属性
   effect.deps = []
-  effect.optins = options
+  effect.options = options
   return effect
 }
 
@@ -106,13 +106,20 @@ export function track(target, key) {
   }
 }
 
-// set的时候，触发effect
+// set的时候，触发trigger
 export function trigger(target, type, key, value?, oldValue?) {
   let depsMap = targetMap.get(target)
   if (!depsMap) return
 
   const run = (effects) => {
-    effects.forEach((effect) => effect && effect())
+    effects.forEach((effect) => {
+      // 有schedular，就执行schedular，用于支持computed的缓存
+      if (effect.options.schedular) {
+        effect.options.schedular(effect)
+      } else {
+        effect && effect()
+      }
+    })
   }
 
   // 数组的特殊情况处理
