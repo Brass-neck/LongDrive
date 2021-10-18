@@ -65,3 +65,35 @@ setTimeout(() => {
   isShow.value = false
 }, 1000)
 ```
+
+### toRef
+
+- 为了把响应式对象中的某个属性单独解构出来使用，希望解构出来的这个属性也是响应式的，就需要使用 toRef
+
+- 原理使用的是 代理模式 ，代理到 proxy 上，可以说借助了 proxy 的响应式
+
+```javascript
+// 单纯的解构，得到的 name 属性只是字符串，会丧失响应性，不是响应式的
+const proxy = reactive({ name: 'zz' })
+const { name } = proxy
+console.log(name) // zz
+
+// 使用toRef，得到的name属性也是一个ref对象，是响应式的
+// 代理模式：访问 nameRef.value 的时候，代理到 proxy 上
+let nameRef = toRef(proxy, 'name')
+console.log(nameRef) // 一个响应式对象
+```
+
+### toRefs
+
+- 功能同`toRef`，也是把响应式对象里的属性都变成响应式的，但是`toRefs`可以一次转多个属性
+
+- 实际上就是循环调用 toRef
+
+```javascript
+const proxy = reactive({ name: 'zz', age: 16 })
+const { name, age } = toRefs(proxy)
+
+const proxy2 = reactive([1, 2, 3, 4])
+const [a, b, c, d] = proxy2
+```
