@@ -36,6 +36,18 @@ npm i @vue/reactivity
 
 ## keypoints record
 
+### vue 几大模块
+
+1. runtime-dom，提供 dom 创建、属性处理的 API（也就是生成真实节点），目的是为了抹平平台的差异，不同平台对 dom 操作方式是不同的，比如在小程序端是没有 dom 的，可能需要额外的一套 runtime-dom 。把这些 API 传入到 runtime-core 中，core 可以调用
+
+2. runtime-core，调用 reactivity
+
+3. reactivity
+
+4. compiler（编译模板使用）
+
+每一个模块都是一个子包，也就是一个文件夹，通过`npm init -y`生成自己的包管理
+
 ### reactive
 
 1. 有缓存直接返回缓存，没有缓存使用 `new Proxy` 创建新代理，并设置在 `WeakMap` 弱引用缓存 map 中
@@ -123,3 +135,9 @@ effect(() => {
   console.log(newAge.value)
 })
 ```
+
+### runtime-dom
+
+收集用户传入的参数，和创建的平台 dom API 一起，传给 runtime-core，由 runtime-core 生成渲染器
+
+1. patchEvents，给元素绑定事件，利用`引用类型`，在引用类型上添加属性，做缓存
