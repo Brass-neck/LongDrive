@@ -48,6 +48,8 @@ npm i @vue/reactivity
 
 每一个模块都是一个子包，也就是一个文件夹，通过`npm init -y`生成自己的包管理
 
+<hr>
+
 ### reactive
 
 1. 有缓存直接返回缓存，没有缓存使用 `new Proxy` 创建新代理，并设置在 `WeakMap` 弱引用缓存 map 中
@@ -59,6 +61,8 @@ npm i @vue/reactivity
    ii. 同时会触发属性的 get ，然后触发`track`进行依赖收集，用一个 `weakMap`以 obj: { key: [effect] } 的形式，存放 reactive(obj)中的 obj 和 effect 中被使用的属性 key，以及依赖的 effect 的关系
 
 4. 处理数组的特殊情况
+
+<hr>
 
 ### ref
 
@@ -80,6 +84,8 @@ setTimeout(() => {
 }, 1000)
 ```
 
+<hr>
+
 ### toRef
 
 - 为了把响应式对象中的某个属性单独解构出来使用，希望解构出来的这个属性也是响应式的，就需要使用 toRef
@@ -98,6 +104,8 @@ let nameRef = toRef(proxy, 'name')
 console.log(nameRef) // 一个响应式对象
 ```
 
+<hr>
+
 ### toRefs
 
 - 功能同`toRef`，也是把响应式对象里的属性都变成响应式的，但是`toRefs`可以一次转多个属性
@@ -111,6 +119,8 @@ const { name, age } = toRefs(proxy)
 const proxy2 = reactive([1, 2, 3, 4])
 const [a, b, c, d] = proxy2
 ```
+
+<hr>
 
 ### computed
 
@@ -136,8 +146,163 @@ effect(() => {
 })
 ```
 
+<hr>
+
 ### runtime-dom
 
 收集用户传入的参数，和创建的平台 dom API 一起，传给 runtime-core，由 runtime-core 生成渲染器
 
 1. patchEvents，给元素绑定事件，利用`引用类型`，在引用类型上添加属性，做缓存
+
+<hr>
+
+### runtime-core
+
+会根据 runtime-dom 传过来的 dom api 生成 render 渲染器
+
+1. createRenderer
+
+```javascript
+createRenderer(apiFromRuntimeDOM){
+  return { render, createApp }
+}
+```
+
+2. createApp，返回一个 app 对象，上面有 mount 方法
+
+```javascript
+createApp(rootComponent){
+  const app = {
+    mount(container) {
+        // 1. 根据用户传入的组件，生成一个虚拟节点
+        const vnode = createVnode(rootComponent)
+        // 2. 把虚拟节点渲染到容器中
+        render(vnode, container)
+      }
+  }
+  return app
+}
+
+// createApp就是创建组件的api
+createApp(<App />).mount('#app')
+```
+
+3. createVnode(rootComponent, props, children = null)创建虚拟节点
+
+```javascript
+二进制是 0b 开头
+0b1 代表 二进制 1，等于1
+0b10 代表 二进制 10，等于2
+0b100 代表 二进制 100，等于4
+0b1000 代表 二进制 1000，等于8
+
+let a = 0b1
+a = a << 1  表示向左移动一位，得到0b10
+a = a << 1  表示向左移动一位，得到0b100
+a = a << 1  表示向左移动一位，得到0b1000
+
+二进制，每移动一位，相当于乘以2
+
+-------------------------------
+
+100 | 10 = 110
+| 表示按位或，有一个是1就是1，不够的在前面补零
+  100
+  010
+= 110
+
+110 & 100 = 100（100转为十进制，是一个数字，不是0，那么表示110包含100）
+& 表示按位与，两个都是1才是1
+  110
+  100
+= 100
+
+110 & 001 = 000（000转为十进制是0，表示110不包含001）
+
+-------------------------------
+
+检查包含不包含，常用于权限，比如
+const manager = 1 << 1
+const user = 1 << 2
+const order = 1 << 3
+
+// admin包含manager和user
+const admin = manager | user
+
+// 检查manager是否包含order
+admin & order = 0000
+
+```
+
+**用`位运算`标识类型，可以做权限的检查和权限的组合**
+
+```typescript
+export const enum ShapeFlags {
+  ELEMENT = 1, // 元素
+  FUNCTIONAL_COMPONENT = 1 << 1, //函数组件
+  STATEFUL_COMPONENT = 1 << 2, // 带状态的组件
+  TEXT_CHILDREN = 1 << 3, // 组件的孩子是文本
+  ARRAY_CHILDREN = 1 << 4, // 组件的孩子是数组
+  SLOTS_CHILDREN = 1 << 5, // 组件的孩子是插槽
+  TELEPORT = 1 << 6, // 传送门
+  SUSPENSE = 1 << 7, // 实现异步组件
+  COMPONENT_SHOULD_KEEP_ALIVE = 1 << 8,
+  COMPONENT_KEPT_ALIVE = 1 << 9,
+  COMPONENT = ShapeFlags.STATEFUL_COMPONENT | ShapeFlags.FUNCTIONAL_COMPONENT // |是按位或
+}
+```
+
+4. render(vnode, container)，根据虚拟节点，生成真实节点
+
+5. patch(oldVnode, newVnode, container)，里面判断 newVnode 的 shapeFlag，是组件还是元素，走不同的方法；如果 oldVnode == null，说明是首次 mount，否则是更新。
+
+   ① 如果是 mount，需要 createComponentInstance 创建 instance 实例对象，里面包含 ctx、attrs、props、slots、vnode、isMounted 等属性；
+
+   从 instance 里拿出用户传的 setup 函数执行，同时把 props 和 ctx 传过去，setup(props, ctx);
+
+   创建 ctx，是一个对象，包含 { attrs, slots, emit, expose }
+
+   ```javascript
+   // 组件1.vue
+   {
+     name: '组件1',
+     setup(props, {attrs, slots, emit, expose}) {
+       const num = reactive({
+         a: 1
+       })
+
+       function changeNum(val){
+         num.a = val
+       }
+
+       // 暴露方法，别人就可以通过ref.changeNum调用方法
+       // 与vue2不同的是，vue2可以调用所有方法，且不可私有化
+       // vue3如果不写expose，默认暴露所有方法
+       // 如果写了expose，只暴露expose里的方法，其他的会被私有化
+       expose({
+         changeNum
+       })
+
+       return {
+         num
+       }
+     }
+   }
+
+   // 组件2.vue
+   {
+     name: '组件2',
+     template: `<组件1 ref="r1">`,
+     setup(props){
+       const r1 = ref(null)
+
+       onMounted(() => {
+         r1.value.changeNum(2)
+       })
+
+       return {
+         r1
+       }
+     }
+   }
+   ```
