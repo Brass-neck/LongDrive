@@ -252,17 +252,22 @@ export const enum ShapeFlags {
 }
 ```
 
-4. render(vnode, container)，根据虚拟节点，生成真实节点
+4. render(vnode, container)，根据虚拟节点，生成真实节点，render 里执行了 patch
 
-5. patch(oldVnode, newVnode, container)，里面判断 newVnode 的 shapeFlag，是组件还是元素，走不同的方法；如果 oldVnode == null，说明是首次 mount，否则是更新。
+5. patch(oldVnode, newVnode, container)，里面判断 newVnode 的 shapeFlag，是组件还是元素，走不同的方法
 
-   ① 如果是 mount，需要 createComponentInstance 创建 instance 实例对象，里面包含 ctx、attrs、props、slots、vnode、isMounted 等属性；
+   如果 oldVnode == null，说明是首次 mount，否则是更新
+
+   首次启动，用户传入一个`带 setup 方法`的，那就是组件，创建组件实例 instance，拿出 setup 执行，执行结果如果是 h 函数，执行 h 函数得到虚拟节点，再执行 patch，这一次 shapeFlag 不再是组件，而是 h 函数里的元素了，就走到 handleElement，把虚拟节点变成真实节点，细节如下：
+
+   createComponentInstance 创建 instance 实例对象，里面包含 ctx、attrs、props、slots、vnode、isMounted 等属性；
 
    从 instance 里拿出用户传的 setup 函数执行，同时把 props 和 ctx 传过去，setup(props, ctx);
 
    创建 ctx，是一个对象，包含 { attrs, slots, emit, expose }
 
    ```javascript
+   // 这里说一下新特性 expose
    // 组件1.vue
    {
      name: '组件1',
@@ -306,3 +311,9 @@ export const enum ShapeFlags {
      }
    }
    ```
+
+   setup 函数执行结果，是函数的话就是 h 函数，执行 h 函数，得到虚拟节点，再走 patch
+
+6. h 函数，内部调用了 createVnode 生成虚拟节点
+
+7. handleElement(vnode1, vnode2, container)，如果 vnode1 == null，是首次挂载，直接变为真实 dom；否则就走 dom diff

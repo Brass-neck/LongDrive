@@ -1,11 +1,68 @@
 import { ShapeFlags } from '../shared/types'
 import { createApp } from './apiCreateApp'
+import { isFunction } from '../utils/index'
 
 /**
  * @param renderOptions 不同平台的 api 操作，来自runtime-dom
  */
 export function createRenderer(renderOptions: {}) {
   const updateComponent = (vnode1, vnode2, container) => {}
+
+  /******************** handleElement *********************/
+  const mountChildren = (children, container) => {
+    for (let i = 0; i < children.length; i++) {
+      patch(null, children[i], container)
+    }
+  }
+
+  // 生成真实dom
+  const mountElement = (vnode, container) => {
+    const { type, props, children, shapeFlag } = vnode
+
+    let el = (vnode.el = renderOptions.createElement(type))
+
+    if (props) {
+      for (const key in props) {
+        renderOptions.setProp(el, key, props[key])
+      }
+    }
+
+    // 设置完父亲，设置孩子
+    if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+      // 孩子是数组，递归
+      mountChildren(children, el)
+    } else if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+      // 孩子是文本，直接设置
+      renderOptions.setText(el, children)
+    }
+
+    renderOptions.appendChild(el, container)
+  }
+
+  const handleElement = (vnode1, vnode2, container) => {
+    if (vnode1 == null) {
+      // 首次挂载元素
+      mountElement(vnode2, container)
+    } else {
+      // dom diff 算法
+    }
+  }
+  /******************** handleElement *********************/
+
+  /******************** handleComponent *********************/
+  // 执行 h函数
+  const setupRenderer = (instance, container) => {
+    if (!instance.isMounted) {
+      let subTree = (instance.subTree = instance.render())
+
+      patch(null, subTree, container)
+      instance.isMounted = false
+    } else {
+      console.log('修改了数据')
+    }
+  }
+
+  // 创建组件实例，并执行setup得到h函数
   const mountComponent = (vnode2, container) => {
     // 1. 创建实例
     let instance = (vnode2.component = createComponentInstance(vnode2))
@@ -15,7 +72,13 @@ export function createRenderer(renderOptions: {}) {
     if (setup) {
       // 3. 创建好 ctx
       let ctx = createSetupContext(instance)
+      // 结果可能是一个对象，是给模板使用的数据
+      // 可能是一个函数，那就是 h函数，执行 h 函数 得到 虚拟节点
       let setupResult = setup(instance.props, ctx)
+      if (isFunction(setupResult)) instance.render = setupResult
+
+      // 执行 h函数
+      setupRenderer(instance, container)
     }
   }
 
@@ -26,13 +89,15 @@ export function createRenderer(renderOptions: {}) {
       updateComponent(vnode1, vnode2, container)
     }
   }
+  /******************** handleComponent *********************/
 
   // patch里判断vnode类型，根据不同类型，触发不同方法去处理
   const patch = (vnode1, vnode2, container) => {
     const { shapeFlag } = vnode2
 
     if (shapeFlag & ShapeFlags.ELEMENT) {
-      // 包含元素
+      // 包含元素，那就走处理元素的方法
+      handleElement(vnode1, vnode2, container)
     } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
       // 包含组件，那就走处理组件的方法
       handleComponent(vnode1, vnode2, container)
@@ -64,7 +129,8 @@ function createComponentInstance(vnode) {
     setupState: {},
     ctx: {},
     isMounted: false,
-    subTree: null
+    subTree: null,
+    render: null
   }
   return instance
 }
