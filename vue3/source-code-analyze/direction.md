@@ -317,3 +317,16 @@ export const enum ShapeFlags {
 6. h 函数，内部调用了 createVnode 生成虚拟节点
 
 7. handleElement(vnode1, vnode2, container)，如果 vnode1 == null，是首次挂载，直接变为真实 dom；否则就走 dom diff
+
+8. dom diff 比较两个虚拟节点
+
+   ① patch 里判断是不是 sameVnode(key 和 tag 是否相同)，不是，不可复用，直接删除老节点，挂载新节点
+
+   ② 是 sameVnode，节点复用，并且进行更深入的对比，patchProps 属性对比、patchChildren 孩子对比
+
+   ③ patchChildren，如果新老孩子都是数组，就需要最核心的 dom diff 算法
+
+   ④ dom diff，头头比、尾尾比；  
+   如果都不成功，就需要一个 map 映射表，把新的内容做成映射表，保存新的 child 的 key 和其索引位置 i 的关系，然后 for 循环老的，看看在新的 map 里有没有，有的就复用，没有的就删除（用一个都是 0 的数组[0,0,0]标识，如果老的在新的里找到，就把 0 置为不是 0 的一个位置索引）
+
+   最长递增子序列的优化
