@@ -1,20 +1,22 @@
-import React, { useState } from 'react'
-import { Table, Tag, Button } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { Table, Tag, Button, Modal, Popover, Switch } from 'antd'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
+import { showConfirm } from '../../../components/News/common/commonComponents'
+
+const { confirm } = Modal
 
 export default function RightList() {
-  const [dataSource, setdataSource] = useState([
-    {
-      id: '001',
-      title: '胡彦斌',
-      key: '/home'
-    },
-    {
-      id: '002',
-      title: '胡彦祖',
-      key: '/user'
-    }
-  ])
+  const [dataSource, setdataSource] = useState([])
+
+  useEffect(() => {
+    getList()
+  }, [])
+
+  const getList = async () => {
+    let res = await window.$g.get('/rights?_embed=children')
+    res.forEach((e) => e.children.length === 0 && (e.children = ''))
+    setdataSource(res)
+  }
 
   const columns = [
     {
@@ -33,7 +35,7 @@ export default function RightList() {
     },
     {
       title: '操作',
-      render: () => {
+      render: (item) => {
         return (
           <div>
             <Button
@@ -41,13 +43,43 @@ export default function RightList() {
               shape='circle'
               icon={<DeleteOutlined />}
               style={{ marginRight: '5px' }}
+              onClick={() => showConfirm(window.$g.WORD_MAP.CONFIRM_DELETE, () => del(item))}
             />
-            <Button type='primary' shape='circle' icon={<EditOutlined />} />
+            <Popover
+              content={
+                <div style={{ textAlign: 'center' }}>
+                  <Switch
+                    checked={item.pagepermisson}
+                    onChange={(value) => changeAuth(value, item)}
+                  />
+                </div>
+              }
+              title='配置权限'
+              trigger={item.pagepermisson == undefined ? '' : 'click'}
+            >
+              <Button
+                type='primary'
+                shape='circle'
+                icon={<EditOutlined />}
+                disabled={item.pagepermisson == undefined}
+              />
+            </Popover>
           </div>
         )
       }
     }
   ]
+
+  const changeAuth = (value, item) => {
+    window.$g.patch(`/rights/${item.id}`, {
+      pagepermisson: value ? 1 : 0
+    })
+    getList()
+  }
+  const del = async (item) => {
+    await window.$g.del(`/rights/${item.id}`)
+    getList()
+  }
   return (
     <div>
       <Table dataSource={dataSource} columns={columns} />

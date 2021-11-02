@@ -90,6 +90,17 @@ axios.get('/posts?_embed=comments')
 axios.get('/comments?_expand=post')
 ```
 
+本项目使用 json-server 模拟后台数据，执行以下命令，起后台服务
+
+```
+yarn global add json-server
+
+cd server
+
+json-server --watch db.json --port 8080
+
+```
+
 <hr>
 
 ### 受控组件/非受控组件

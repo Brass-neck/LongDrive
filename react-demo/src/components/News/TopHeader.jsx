@@ -21,6 +21,7 @@ export default function TopHeader() {
       ) : (
         <MenuFoldOutlined onClick={() => setcollapse(true)} />
       )}
+      面包屑导航
       <div style={{ float: 'right' }}>
         <span style={{ marginRight: '10px' }}>欢迎admin回来</span>
         <Dropdown overlay={menu} style={{ float: 'right' }}>
