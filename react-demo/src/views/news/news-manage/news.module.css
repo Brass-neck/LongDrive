@@ -1,0 +1,14 @@
+.active {
+  display: none;
+  color: green;
+}
+
+.stepBar {
+  width: 85%;
+  margin-bottom: 30px;
+}
+
+.form {
+  width: 50%;
+  margin-left: 30px;
+}
