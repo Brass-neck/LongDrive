@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Table, Tag, Button, Modal, Popover, Switch } from 'antd'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
-import { showConfirm } from '../../../components/News/common/commonComponents'
+import { showConfirm } from '../../../components/common/commonComponents'
 
 const { confirm } = Modal
 

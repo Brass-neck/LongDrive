@@ -126,3 +126,27 @@ json-server --watch db.json --port 8080
 
 1. 后端数据根据`权限列表`返回（权限列表 - 配置开关、删除权限，会影响菜单显示）
 2. 当前登录用户的`所属角色`拥有的权限（角色列表 - 角色是一系列权限的集合 - 不同角色拥有不同权限会影响菜单显示 - 用户列表中配置角色）
+
+<hr>
+
+### forwardRef
+
+- 引用传递（Ref forwading）是一种通过组件向子组件自动传递 **引用 ref** 的技术，说白了，就是可以让父组件获取到子组件中定义了 ref 属性的元素
+
+- 用法：将函数子组件用`forwardRef`包起来，得到一个具有`ref参数`的高阶组件，父组件传递该参数的 ref 引用，子组件拿到参数绑定到自己的元素上
+
+```jsx
+import React, { useRef, useEffect, forwardRef } from 'react'
+
+const Child = forwardRef((props, ref) => <Input type='text' ref={ref} />)
+
+const Parent = () => {
+  const container = useRef(null)
+
+  useEffect(() => {
+    // useRef获取到的容器中，current属性指向被引用的DOM元素
+    container.current.focus()
+  }, [])
+  return <Child ref={container}></Child>
+}
+```

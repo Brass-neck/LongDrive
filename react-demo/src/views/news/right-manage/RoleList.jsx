@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { DeleteOutlined, UnorderedListOutlined } from '@ant-design/icons'
-import { showConfirm } from '../../../components/News/common/commonComponents'
+import { showConfirm } from '../../../components/common/commonComponents'
 
 import { Table, Button, Modal, Tree } from 'antd'
 import './index.scss'
@@ -87,6 +87,7 @@ export default function RoleList() {
     <div>
       <Table rowKey='id' dataSource={dataSource} columns={columns} />
       <Modal
+        className='role-list-auth-modal'
         title='权限配置'
         visible={modelVisible}
         onCancel={() => setmodelVisible(false)}

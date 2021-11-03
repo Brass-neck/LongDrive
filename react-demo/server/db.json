@@ -10,12 +10,12 @@
       "roleId": 1
     },
     {
-      "username": "铁锤",
-      "password": "123",
+      "username": "铁锤22",
+      "password": "1233",
       "roleState": true,
       "default": false,
-      "region": "亚洲",
-      "roleId": 2,
+      "region": "欧洲",
+      "roleId": 3,
       "id": 2
     },
     {
@@ -71,6 +71,13 @@
       "region": "亚洲",
       "roleId": 3,
       "id": 8
+    },
+    {
+      "username": "zzzz",
+      "password": "zzzz",
+      "region": "欧洲",
+      "roleId": 3,
+      "id": 9
     }
   ],
   "roles": [

@@ -3,7 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom'
 
 import { Layout, Menu } from 'antd'
 
-import './News.css'
+import './news.css'
 
 import SideMenu from '../../components/News/SideMenu'
 import TopHeader from '../../components/News/TopHeader'
