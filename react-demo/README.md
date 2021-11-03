@@ -1,6 +1,17 @@
 # 简介
 
-一个 react + hooks + antd 技术栈的类后台管理系统
+一个 `react + hooks + antd` 技术栈的类后台管理系统
+
+本项目使用 `json-server` 模拟后台数据，执行以下命令，起后台服务
+
+```
+yarn global add json-server
+
+cd server
+
+json-server --watch db.json --port 8080
+
+```
 
 # Key Points Record
 
@@ -90,17 +101,6 @@ axios.get('/posts?_embed=comments')
 axios.get('/comments?_expand=post')
 ```
 
-本项目使用 json-server 模拟后台数据，执行以下命令，起后台服务
-
-```
-yarn global add json-server
-
-cd server
-
-json-server --watch db.json --port 8080
-
-```
-
 <hr>
 
 ### 受控组件/非受控组件
@@ -149,4 +149,22 @@ const Parent = () => {
   }, [])
   return <Child ref={container}></Child>
 }
+```
+
+<hr>
+
+### 路由问题
+
+如果把路由写死到前端，即使左侧导航没有相关权限的目录，用户也可以在浏览器输入栏直接输入存在的路由进入页面，所以我们需要动态生成路由，而不是写死
+
+1. 前端写一份 map 表，key=路由路径，value=页面要加载的组件
+2. 异步获取后端路由列表，循环这个列表，加上**权限判断**，**动态**生成<Route>组件，配合刚才的 map 表，设置路由要加载的组件（一般需要 `exact` 模式）
+3. 权限判断：① 权限列表中页面权限是否打开 ② 该登录用户的权限中是否包含
+
+```jsx
+// 在前端文件中写死所有路由，错误做法
+<Switch>
+  <Route path='/home' component={Home}></Route>
+  // ...
+</Switch>
 ```

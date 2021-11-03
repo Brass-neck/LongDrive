@@ -1,19 +1,20 @@
-import React from 'react'
-import { Redirect, Route, Switch } from 'react-router-dom'
+import React, { useEffect } from 'react'
 
-import { Layout, Menu } from 'antd'
+import { Layout } from 'antd'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 
 import './news.css'
 
 import SideMenu from '../../components/news/SideMenu'
 import TopHeader from '../../components/news/TopHeader'
-import Home from './home/Home'
-import UserList from './user-manage/UserList'
-import RoleList from './right-manage/RoleList'
-import RightList from './right-manage/RightList'
-import NoPermission from '../noPermission/NoPermission'
+import NewsRouter from '../../components/news/NewsRouter'
 
 export default function News() {
+  NProgress.start()
+  useEffect(() => {
+    NProgress.done()
+  })
   const { Content } = Layout
   return (
     <Layout>
@@ -30,14 +31,7 @@ export default function News() {
             overflow: 'auto'
           }}
         >
-          <Switch>
-            <Route path='/home' component={Home}></Route>
-            <Route path='/user-manage/list' component={UserList}></Route>
-            <Route path='/right-manage/role/list' component={RoleList}></Route>
-            <Route path='/right-manage/right/list' component={RightList}></Route>
-            <Redirect from='/' to='/home' exact></Redirect>
-            <Route path='*' component={NoPermission}></Route>
-          </Switch>
+          <NewsRouter></NewsRouter>
         </Content>
       </Layout>
     </Layout>
