@@ -1,5 +1,5 @@
 import React, { useEffect, useState, forwardRef } from 'react'
-import { Select, Form, Input } from 'antd'
+import { Select, Input } from 'antd'
 import OptionalForm from '../common/OptionalForm'
 
 const { Option } = Select
@@ -40,6 +40,15 @@ const UserForm = forwardRef((props, addFormRef) => {
     }
   }
 
+  const { region, roleId, username } = JSON.parse(localStorage.getItem('token'))
+  const ROLE_MAP = window.$g.MAP.ROLE_MAP
+  const checkDisableRegion = (item) => {
+    return ROLE_MAP[roleId] !== 'superAdmin' && item.value !== region
+  }
+  const checkDisableRole = (item) => {
+    return ROLE_MAP[roleId] !== 'superAdmin' && ROLE_MAP[item.id] !== 'editor'
+  }
+
   const data = {
     items: [
       {
@@ -54,9 +63,9 @@ const UserForm = forwardRef((props, addFormRef) => {
         label: '区域',
         rules: disableRegion ? {} : { required: true },
         render: (
-          <Select defaultValue='' disabled={disableRegion}>
+          <Select disabled={disableRegion}>
             {regionList.map((r) => (
-              <Option value={r.value} key={r.id}>
+              <Option value={r.value} key={r.id} disabled={checkDisableRegion(r)}>
                 {r.title}
               </Option>
             ))}
@@ -68,9 +77,9 @@ const UserForm = forwardRef((props, addFormRef) => {
         label: '角色',
         rules: { required: true },
         render: (
-          <Select defaultValue='' onChange={(v) => roleOnChange(v)}>
+          <Select onChange={(v) => roleOnChange(v)}>
             {roleList.map((r) => (
-              <Option value={r.id} key={r.id}>
+              <Option value={r.id} key={r.id} disabled={checkDisableRole(r)}>
                 {r.roleName}
               </Option>
             ))}

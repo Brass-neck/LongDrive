@@ -47,7 +47,7 @@ export default function RoleList() {
               shape='circle'
               icon={<DeleteOutlined />}
               style={{ marginRight: '5px' }}
-              onClick={() => showConfirm(window.$g.WORD_MAP.CONFIRM_DELETE, () => del(item))}
+              onClick={() => showConfirm(window.$g.MAP.TIP_MAP.CONFIRM_DELETE, () => del(item))}
             />
             <Button
               type='primary'

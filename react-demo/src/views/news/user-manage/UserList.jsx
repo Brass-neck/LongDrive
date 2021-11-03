@@ -13,9 +13,23 @@ export default function UserList() {
   const [currentEdit, setcurrentEdit] = useState(null)
   const [regionList, setregionList] = useState([])
 
+  const { region, roleId, username } = JSON.parse(localStorage.getItem('token'))
+  const ROLE_MAP = window.$g.MAP.ROLE_MAP
+
   const getUserList = async () => {
     let res = await window.$g.get('/users?_expand=role')
-    setuserList(res)
+    // 超管能看到所有list，区域管理能看同区人员，区域编辑只能看到同区同级人员
+    setuserList(
+      ROLE_MAP[roleId] === 'superAdmin'
+        ? res
+        : [
+            ...res.filter((u) => u.username === username),
+            ...res.filter(
+              (u) =>
+                u.region === region && ROLE_MAP[u.roleId] === 'editor' && u.username !== username
+            )
+          ]
+    )
   }
 
   const getRegionList = async () => {
@@ -81,7 +95,7 @@ export default function UserList() {
               icon={<DeleteOutlined />}
               style={{ marginRight: '5px' }}
               disabled={item.default}
-              onClick={() => showConfirm(window.$g.WORD_MAP.CONFIRM_DELETE, () => del(item))}
+              onClick={() => showConfirm(window.$g.MAP.TIP_MAP.CONFIRM_DELETE, () => del(item))}
             />
             <Button
               type='primary'
@@ -134,7 +148,12 @@ export default function UserList() {
 
   return (
     <div>
-      <Button type='primary' onClick={() => showAddModal(false)} style={{ marginBottom: '10px' }}>
+      <Button
+        type='primary'
+        onClick={() => showAddModal(false)}
+        style={{ marginBottom: '10px' }}
+        disabled={ROLE_MAP[roleId] === 'editor'}
+      >
         添加用户
       </Button>
       <Table dataSource={userList} columns={columns} rowKey='id' />

@@ -1,5 +1,5 @@
 import { get, post, del, put, patch } from '../http/http'
-import WORD_MAP from '../utils/wordMap'
+import MAP from '../utils/wordMap'
 
 window.$g = {
   get,
@@ -7,5 +7,5 @@ window.$g = {
   del,
   put,
   patch,
-  WORD_MAP
+  MAP
 }

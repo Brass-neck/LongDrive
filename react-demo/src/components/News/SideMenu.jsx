@@ -15,16 +15,25 @@ function SideMenu(props) {
     setmenuList(res)
   }, [])
 
+  const checkPermission = (item) => {
+    // 1. 校验 权限列表 pagepermission是否开启
+    // 2. 校验 用户权限 是否包含该item
+    const {
+      role: { rights }
+    } = JSON.parse(localStorage.getItem('token'))
+    return item.pagepermisson && rights.includes(item.key)
+  }
+
   const initMenu = (menuData) => {
     return menuData.map((item) => {
-      if (item.children?.length) {
-        return (
-          <SubMenu key={item.key} title={item.title}>
-            {initMenu(item.children)}
-          </SubMenu>
-        )
-      } else {
-        if (item.pagepermisson === 1)
+      if (checkPermission(item))
+        if (item.children?.length) {
+          return (
+            <SubMenu key={item.key} title={item.title}>
+              {initMenu(item.children)}
+            </SubMenu>
+          )
+        } else {
           return (
             <Menu.Item
               key={item.key}
@@ -35,7 +44,7 @@ function SideMenu(props) {
               {item.title}
             </Menu.Item>
           )
-      }
+        }
     })
   }
 

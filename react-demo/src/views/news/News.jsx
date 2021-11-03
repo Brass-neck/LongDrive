@@ -5,8 +5,8 @@ import { Layout, Menu } from 'antd'
 
 import './news.css'
 
-import SideMenu from '../../components/News/SideMenu'
-import TopHeader from '../../components/News/TopHeader'
+import SideMenu from '../../components/news/SideMenu'
+import TopHeader from '../../components/news/TopHeader'
 import Home from './home/Home'
 import UserList from './user-manage/UserList'
 import RoleList from './right-manage/RoleList'
