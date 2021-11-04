@@ -8,6 +8,7 @@ import NoPermission from '../../views/noPermission/NoPermission'
 import NewsAdd from '../../views/news/news-manage/NewsAdd'
 import NewsDraft from '../../views/news/news-manage/NewsDraft'
 import NewsCategory from '../../views/news/news-manage/NewsCategory'
+import NewsPreview from '../../views/news/news-manage/NewsPreview'
 import Audit from '../../views/news/audit-manage/Audit'
 import AuditList from '../../views/news/audit-manage/AuditList'
 import Unpublished from '../../views/news/publish-manage/Unpublished'
@@ -22,6 +23,8 @@ const localRouterMap = {
   '/news-manage/add': NewsAdd,
   '/news-manage/draft': NewsDraft,
   '/news-manage/category': NewsCategory,
+  '/news-manage/preview/:id': NewsPreview,
+  '/news-manage/update/:id': NewsAdd,
   '/audit-manage/audit': Audit,
   '/audit-manage/list': AuditList,
   '/publish-manage/unpublished': Unpublished,
@@ -42,7 +45,11 @@ export default function NewsRouter() {
   }, [])
 
   const checkPermission = (item) => {
-    return localRouterMap[item.key] && item.pagepermisson && rights.includes(item.key)
+    return (
+      localRouterMap[item.key] &&
+      (item.pagepermisson || item.routepermisson) &&
+      rights.includes(item.key)
+    )
   }
 
   return (

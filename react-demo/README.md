@@ -168,6 +168,3 @@ const Parent = () => {
   // ...
 </Switch>
 ```
-
-auditState : 0 未审核 草稿箱 、1 审核中 提交审核、 2 通过、 3 拒绝
-publishState: 0 未发布、1 审核通过待发布、2 发布成功、3 下线

@@ -9,6 +9,8 @@ const { Step } = Steps
 const { Option } = Select
 
 export default function NewsAdd(props) {
+  const [isUpdate, setisUpdate] = useState(false)
+  const [updateId, setupdateId] = useState(0)
   const [currentStep, setcurrentStep] = useState(0)
   const [categoryList, setcategoryList] = useState([])
   const formContainer = useRef(null)
@@ -21,7 +23,23 @@ export default function NewsAdd(props) {
     setcategoryList(res)
   }
 
+  const getDetail = async (id) => {
+    let res = await window.$g.get(`/news/${id}?_expand=category&_expand=role`)
+    formContainer.current.setFieldsValue({
+      title: res.title,
+      categoryId: res.categoryId
+    })
+    setinfo({ ...info, content: res.content })
+  }
+
   useEffect(() => {
+    const id = props.match.params.id
+
+    setisUpdate(id == undefined ? false : true)
+    if (id !== undefined) {
+      setupdateId(id)
+      getDetail(id)
+    }
     getCategoryList()
   }, [])
 
@@ -74,18 +92,27 @@ export default function NewsAdd(props) {
 
   const saveNews = async (type) => {
     let auditState = type === 'draft' ? 0 : 1
-    let param = {
-      ...info,
-      region: region === '' ? '全球' : region,
-      roleId,
-      author: username,
-      createTime: Date.now(),
-      auditState,
-      publishState: 0,
-      star: 0,
-      view: 0
+    let param
+    if (isUpdate) {
+      param = {
+        ...info,
+        auditState
+      }
+      await window.$g.patch(`/news/${updateId}`, param)
+    } else {
+      param = {
+        ...info,
+        region: region === '' ? '全球' : region,
+        roleId,
+        author: username,
+        createTime: Date.now(),
+        auditState,
+        publishState: 0,
+        star: 0,
+        view: 0
+      }
+      await window.$g.post('/news', param)
     }
-    await window.$g.post('/news', param)
     props.history.push(auditState === 0 ? '/news-manage/draft' : '/audit-manage/list')
     notification.info({
       message: '通知',
@@ -96,7 +123,12 @@ export default function NewsAdd(props) {
 
   return (
     <>
-      <PageHeader title='撰写新闻' subTitle='Edit news' />
+      {isUpdate ? (
+        <PageHeader title='更新新闻' subTitle='Edit news' onBack={() => props.history.goBack()} />
+      ) : (
+        <PageHeader title='撰写新闻' subTitle='write news' />
+      )}
+
       <div style={{ marginLeft: '30px' }}>
         <Steps current={currentStep} className={style.stepBar}>
           <Step title='基本信息' description='填写新闻标题、新闻分类' />
@@ -108,7 +140,7 @@ export default function NewsAdd(props) {
           <OptionalForm data={data} className={style.form} ref={formContainer}></OptionalForm>
         </div>
         <div className={currentStep === 1 ? '' : style.active}>
-          <NewsEditor getContent={getContentFromEditor}></NewsEditor>
+          <NewsEditor getContent={getContentFromEditor} content={info.content}></NewsEditor>
         </div>
 
         <div style={{ marginTop: '30px' }}>

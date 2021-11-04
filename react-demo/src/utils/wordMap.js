@@ -1,5 +1,6 @@
 const TIP_MAP = {
-  CONFIRM_DELETE: '确定删除吗？'
+  CONFIRM_DELETE: '确定删除吗？',
+  CONFIRM_AUDIT: '确定要提交审核吗？'
 }
 
 const ROLE_MAP = {
@@ -11,7 +12,31 @@ const ROLE_MAP = {
   editor: 3
 }
 
+const AUDIT_STATE = {
+  0: '未审核',
+  1: '审核中',
+  2: '审核通过',
+  3: '审核失败',
+  审核失败: 3,
+  审核通过: 2,
+  审核中: 1,
+  未审核: 0
+}
+
+const PUBLISH_STATE = {
+  0: '未发布',
+  1: '待发布',
+  2: '发布成功',
+  3: '已下线',
+  已下线: 3,
+  发布成功: 2,
+  待发布: 1,
+  未发布: 0
+}
+
 export default {
   TIP_MAP,
-  ROLE_MAP
+  ROLE_MAP,
+  AUDIT_STATE,
+  PUBLISH_STATE
 }
