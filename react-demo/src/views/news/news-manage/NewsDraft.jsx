@@ -26,6 +26,7 @@ export default function NewsDraft(props) {
     await window.$g.patch(`/news/${item.id}`, {
       auditState: 1
     })
+    getList()
     message.success('提交审核成功！')
   }
 
@@ -79,26 +80,6 @@ export default function NewsDraft(props) {
                 icon={<AuditOutlined />}
               />
             </Tooltip>
-
-            {/* <Popover
-              content={
-                <div style={{ textAlign: 'center' }}>
-                  <Switch
-                    checked={item.pagepermisson}
-                    onChange={(value) => changeAuth(value, item)}
-                  />
-                </div>
-              }
-              title='配置权限'
-              trigger={item.pagepermisson == undefined ? '' : 'click'}
-            >
-              <Button
-                type='primary'
-                shape='circle'
-                icon={<EditOutlined />}
-                disabled={item.pagepermisson == undefined}
-              />
-            </Popover> */}
           </div>
         )
       }

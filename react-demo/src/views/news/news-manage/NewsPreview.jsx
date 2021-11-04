@@ -26,7 +26,7 @@ export default function NewsPreview(props) {
       {info && (
         <div>
           <PageHeader
-            onBack={() => props.history.push('/news-manage/draft')}
+            onBack={() => props.history.goBack()}
             title={info.title}
             subTitle={info.category.title}
           >

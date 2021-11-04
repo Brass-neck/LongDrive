@@ -1,6 +1,8 @@
 const TIP_MAP = {
   CONFIRM_DELETE: '确定删除吗？',
-  CONFIRM_AUDIT: '确定要提交审核吗？'
+  CONFIRM_AUDIT: '确定要提交审核吗？',
+  CONFIRM_CANCEL: '确定要撤销吗？',
+  CONFIRM_PUBLISH: '确定要发布吗？'
 }
 
 const ROLE_MAP = {
