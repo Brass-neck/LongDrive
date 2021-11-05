@@ -168,3 +168,76 @@ const Parent = () => {
   // ...
 </Switch>
 ```
+
+<hr>
+
+### React Context(上下文)
+
+1. Context
+   Context 通过组件树提供了一个传递数据的方法，从而避免了在**组件嵌套层级较深**的时候，手动一层一层的传递 props 属性
+
+2. API
+
+- 祖先组件创建上下文 `Context`并导出，给后代使用`Consumer`，自己使用`Provider`包裹后代组件
+- 后代`import`导入祖先导出的`Context`中的`Consumer`进行使用
+
+```jsx
+// 在祖先组件创建一个上下文的容器(组件), defaultValue可以设置共享的默认数据
+export const { Provider, Consumer } = React.createContext(defaultValue)
+export default function Ancestor() {
+  let name = '来自祖先的name'
+  return (
+    <Provider value={name}>
+      <Son />
+    </Provider>
+  )
+}
+
+// Son组件引用Consumer消费
+import { Consumer } from './Ancestor.js' //引入祖先的Consumer容器
+function Son(props) {
+  return (
+    <Consumer>
+      {(name) => {
+        <p>子组件  获取父组件的值:{name}</p>
+        <Grandson />
+      }}
+    </Consumer>
+  )
+}
+
+// Grandson组件引用Consumer消费
+import { Consumer } from './Ancestor.js' //引入祖先的Consumer容器
+function Grandson(props) {
+  return (
+    <Consumer>
+      {(name) => {
+        <p>后代组件  获取祖先的值:{name}</p>
+      }}
+    </Consumer>
+  )
+}
+```
+
+3. useContext hook
+
+- 使用 hook，后代不需要用`Consumer`包裹，可以直接取出祖先传递的值
+
+```jsx
+import React, { useContext } from 'react'
+
+const App = () => {
+  const AppContext = React.createContext(null)
+
+  const A = () => {
+    const { name } = useContext(AppContext)
+    return <p>{name}</p>
+  }
+
+  return (
+    <AppContext.Provider value={{ name: 'zz' }}>
+      <A />
+    </AppContext.Provider>
+  )
+}
+```
