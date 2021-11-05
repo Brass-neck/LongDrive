@@ -32,7 +32,8 @@ export default function AuditList(props) {
   }
   const handlePublish = async (item) => {
     await window.$g.patch(`/news/${item.id}`, {
-      publishState: 2
+      publishState: 2,
+      publishTime: Date.now()
     })
     getList()
     message.success('恭喜您，新闻发布成功！')

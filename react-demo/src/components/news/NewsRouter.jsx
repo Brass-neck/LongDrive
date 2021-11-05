@@ -11,9 +11,7 @@ import NewsCategory from '../../views/news/news-manage/NewsCategory'
 import NewsPreview from '../../views/news/news-manage/NewsPreview'
 import Audit from '../../views/news/audit-manage/Audit'
 import AuditList from '../../views/news/audit-manage/AuditList'
-import Unpublished from '../../views/news/publish-manage/Unpublished'
 import Published from '../../views/news/publish-manage/Published'
-import Sunset from '../../views/news/publish-manage/Sunset'
 
 const localRouterMap = {
   '/home': Home,
@@ -27,9 +25,9 @@ const localRouterMap = {
   '/news-manage/update/:id': NewsAdd,
   '/audit-manage/audit': Audit,
   '/audit-manage/list': AuditList,
-  '/publish-manage/unpublished': Unpublished,
+  '/publish-manage/unpublished': Published,
   '/publish-manage/published': Published,
-  '/publish-manage/sunset': Sunset
+  '/publish-manage/sunset': Published
 }
 
 export default function NewsRouter() {
