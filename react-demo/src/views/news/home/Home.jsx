@@ -45,7 +45,7 @@ export default function Home() {
                 dataSource={viewList}
                 renderItem={(item) => (
                   <List.Item>
-                    <a href={`#/news-manage/preview/${item.id}`}>{item.title}</a>
+                    <a href={`#/detail/${item.id}`}>{item.title}</a>
                   </List.Item>
                 )}
               />
@@ -58,7 +58,7 @@ export default function Home() {
                 dataSource={starList}
                 renderItem={(item) => (
                   <List.Item>
-                    <a href={`#/news-manage/preview/${item.id}`}>{item.title}</a>
+                    <a href={`#/detail/${item.id}`}>{item.title}</a>
                   </List.Item>
                 )}
               />
