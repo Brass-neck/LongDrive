@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
+import { Spin } from 'antd'
+import { connect } from 'react-redux'
+
 import Home from '../../views/news/home/Home'
 import RightList from '../../views/news/right-manage/RightList'
 import RoleList from '../../views/news/right-manage/RoleList'
@@ -30,7 +33,7 @@ const localRouterMap = {
   '/publish-manage/sunset': Published
 }
 
-export default function NewsRouter() {
+const NewsRouter = (props) => {
   const [backRouteList, setbackRouteList] = useState([])
 
   const {
@@ -51,15 +54,24 @@ export default function NewsRouter() {
   }
 
   return (
-    <Switch>
-      {backRouteList.map(
-        (r) =>
-          checkPermission(r) && (
-            <Route exact path={r.key} key={r.key} component={localRouterMap[r.key]} />
-          )
-      )}
-      <Redirect from='/' to='/home' exact></Redirect>
-      {backRouteList.length > 0 && <Route path='*' component={NoPermission}></Route>}
-    </Switch>
+    <Spin size='large' tip='Loading...' spinning={props.isLoading}>
+      <Switch>
+        {backRouteList.map(
+          (r) =>
+            checkPermission(r) && (
+              <Route exact path={r.key} key={r.key} component={localRouterMap[r.key]} />
+            )
+        )}
+        <Redirect from='/' to='/home' exact></Redirect>
+        {backRouteList.length > 0 && <Route path='*' component={NoPermission}></Route>}
+      </Switch>
+    </Spin>
   )
 }
+
+const mapStateToProps = (state) => {
+  return {
+    isLoading: state.LoadingReducer.isLoading
+  }
+}
+export default connect(mapStateToProps)(NewsRouter)

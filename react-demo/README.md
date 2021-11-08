@@ -1,6 +1,6 @@
 # 简介
 
-一个 `react + hooks + antd` 技术栈的类后台管理系统
+这是一个 `react + hooks + redux + antd` 技术栈的类后台管理系统
 
 本项目使用 `json-server` 模拟后台数据，执行以下命令，起后台服务
 
@@ -13,7 +13,21 @@ json-server --watch db.json --port 8080
 
 ```
 
+通过以下命令起前端项目
+
+```sh
+npm install -g yarn
+# 查看yarn是否安装成功
+yarn -v
+# 安装所有依赖
+yarn
+# 起项目
+yarn start
+```
+
 # Key Points Record
+
+这里记录一些项目中遇到的知识点
 
 ### CSS Modules
 
@@ -129,7 +143,7 @@ axios.get('/comments?_expand=post')
 
 <hr>
 
-### forwardRef
+### forwardRef 转发 ref
 
 - 引用传递（Ref forwading）是一种通过组件向子组件自动传递 **引用 ref** 的技术，说白了，就是可以让父组件获取到子组件中定义了 ref 属性的元素
 
@@ -148,6 +162,39 @@ const Parent = () => {
     container.current.focus()
   }, [])
   return <Child ref={container}></Child>
+}
+```
+
+上面这个例子是直接转发 ref，父子组件引用的是**同一个 ref 对象**，官方不建议这样做，而是建议搭配`useImperativeHandle`一起使用，这样的话，**父子组件就会拥有各自的 ref**
+
+`useImperativeHandle`三个参数
+
+- 1、父组件传来的 ref
+- 2、函数，返回一个对象，就是 ref 对象，可以给 ref 定义方法和属性，父组件就可以使用
+- 3、依赖列表，依赖一变化，给父组件的 ref 就会变化
+
+```jsx
+import React, { useImperativeHandle, forwardRef } from 'react'
+
+const Child = React.forwardRef((props, ref) => {
+  const childRef = useRef()
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      focus: () => childRef.current.focus(),
+      title: '可以给ref对象定义方法和属性，父组件就可以使用'
+    }),
+    ['依赖列表，依赖变了，父组件收到的ref就会变化']
+  )
+
+  return <input ref={childRef} type='text' />
+})
+
+const App = () => {
+  const parentRef = useRef()
+
+  return <Child ref={parentRef}></Child>
 }
 ```
 
@@ -241,3 +288,7 @@ const App = () => {
   )
 }
 ```
+
+<hr />
+
+### redux-persist 数据持久化

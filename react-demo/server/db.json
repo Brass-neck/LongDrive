@@ -10,11 +10,11 @@
       "roleId": 1
     },
     {
-      "username": "铁锤22",
-      "password": "1233",
+      "username": "铁锤",
+      "password": "123",
       "roleState": true,
       "default": false,
-      "region": "欧洲",
+      "region": "南极洲",
       "roleId": 3,
       "id": 2
     },
@@ -73,11 +73,12 @@
       "id": 8
     },
     {
-      "username": "zzzz",
-      "password": "zzzz",
+      "username": "zz",
+      "password": "123",
       "region": "欧洲",
       "roleId": 3,
-      "id": 9
+      "id": 9,
+      "roleState": true
     }
   ],
   "roles": [
@@ -372,8 +373,8 @@
   "categories": [
     {
       "id": 1,
-      "title": "时事新闻",
-      "value": "时事新闻"
+      "title": "时事新闻xg",
+      "value": "时事新闻xg"
     },
     {
       "id": 2,
@@ -439,21 +440,6 @@
     }
   ],
   "news": [
-    {
-      "title": "千锋教育",
-      "categoryId": 3,
-      "content": "<p style=\"text-align:start;\"></p>\n<p style=\"margin-left:0px;\"><span style=\"color: rgb(0,0,0);background-color: rgb(255,255,255);font-size: 14px;font-family: 微软雅黑, \"PingFang SC;\">      看到有同学在问大连的</span><a href=\"http://www.mobiletrain.org/\" target=\"_blank\"><span style=\"color: rgb(0,0,0);background-color: rgb(255,255,255);font-size: 14px;font-family: 微软雅黑, \"PingFang SC;\">千锋教育</span></a><span style=\"color: rgb(0,0,0);background-color: rgb(255,255,255);font-size: 14px;font-family: 微软雅黑, \"PingFang SC;\">校址在哪里，这里小千就来给大家介绍一下千锋教育和校区地址，给大家参考一下。</span></p>\n<p style=\"text-align:center;\"></p>\n<img src=\"http://upload.mobiletrain.org/2020/1218/1608271193504.jpg\" alt=\"u=313055993,4178527216&fm=26&gp=0\" style=\"height: ;width: \"/>\n<p style=\"margin-left:0px;\"><span style=\"color: rgb(0,0,0);background-color: rgb(255,255,255);font-size: 14px;font-family: 微软雅黑, \"PingFang SC;\"><strong>千锋教育大连校区地址</strong></span></p>\n<p style=\"margin-left:0px;\"><span style=\"color: rgb(0,0,0);background-color: rgb(255,255,255);font-size: 14px;font-family: 微软雅黑, \"PingFang SC;\">      首先先给大家介绍一下千锋教育的大连校区地址，坐落在：辽宁省大连市高新园区爱贤街10号大连设计城A座901，联系和咨询电话可以拨打 400-811-9990，会有专人负责接待同学。</span></p>\n<p style=\"margin-left:0px;\"><span style=\"color: rgb(0,0,0);background-color: rgb(255,255,255);font-size: 14px;font-family: 微软雅黑, \"PingFang SC;\"><strong>千锋教育</strong></span></p>\n<p style=\"margin-left:0px;\"><span style=\"color: rgb(0,0,0);background-color: rgb(255,255,255);font-size: 14px;font-family: 微软雅黑, \"PingFang SC;\">      再给大家简单介绍一下千锋教育，千锋教育是北京千锋互联科技有限公司旗下的品牌，开设了12大热门课程，并且每月都会更新最新的前沿技术。</span></p>\n<p style=\"margin-left:0px;\"><span style=\"color: rgb(0,0,0);background-color: rgb(255,255,255);font-size: 14px;font-family: 微软雅黑, \"PingFang SC;\">      千锋教育一直秉持着“用良心做教育”的理念，在全国拥有上百家的合作高校，更是有超过20000家的合作企业。</span></p>\n<p style=\"margin-left:0px;\"><span style=\"color: rgb(0,0,0);background-color: rgb(255,255,255);font-size: 14px;font-family: 微软雅黑, \"PingFang SC;\">      千锋教育总部设立在北京，目前在目前已在深圳、上海、郑州、广州、大连、武汉、成都、西安、杭州、青岛、重庆、长沙、哈尔滨、南京、太原建立分公司。</span></p>\n<p style=\"margin-left:0px;\"><span style=\"color: rgb(0,0,0);background-color: rgb(255,255,255);font-size: 14px;font-family: 微软雅黑, \"PingFang SC;\">      千锋教育开设HTML5前端、Java、Python、全链路设计、云计算、软件测试、大数据、智能物联网、Unity游戏开发、Go语言开发、网络安全、互联网营销学科，并推出软考、Adobe认证、PMP认证、</span><a href=\"http://www.mobiletrain.org/topic/redhat/\" target=\"_blank\"><span style=\"color: rgb(0,0,0);background-color: rgb(255,255,255);font-size: 14px;font-family: 微软雅黑, \"PingFang SC;\">红帽RHCE认证</span></a><span style=\"color: rgb(0,0,0);background-color: rgb(255,255,255);font-size: 14px;font-family: 微软雅黑, \"PingFang SC;\">课程</span></p>\n<p style=\"margin-left:0px;\"><span style=\"color: rgb(0,0,0);background-color: rgb(255,255,255);font-size: 14px;font-family: 微软雅黑, \"PingFang SC;\">      最后欢迎大家来到千锋教育大连校区了解我们的培训课程，全程名师面授确保课程品质，还享受2周的免费试听不满意不缴费随时退学即可，赶紧来了解一下吧~~~~</span></p>\n<p style=\"text-align:start;\"><br>&nbsp;</p>\n",
-      "region": "全球",
-      "author": "admin",
-      "roleId": 1,
-      "auditState": 2,
-      "publishState": 2,
-      "createTime": 1615777743864,
-      "star": 1000,
-      "view": 2005,
-      "id": 1,
-      "publishTime": 1615778496314
-    },
     {
       "title": "Hello World",
       "categoryId": 1,
@@ -573,6 +559,90 @@
       "view": 6,
       "id": 9,
       "publishTime": 1616203519274
+    },
+    {
+      "content": "<p>111111</p>\n",
+      "title": "111",
+      "categoryId": 1,
+      "region": "全球",
+      "roleId": 1,
+      "author": "admin",
+      "createTime": 1636033620457,
+      "auditState": 2,
+      "publishState": 2,
+      "star": 0,
+      "view": 0,
+      "id": 10
+    },
+    {
+      "content": "<p>铁锤铁锤铁锤</p>\n",
+      "title": "铁锤",
+      "categoryId": 6,
+      "region": "欧洲",
+      "roleId": 3,
+      "author": "铁锤",
+      "createTime": 1636036614607,
+      "auditState": 2,
+      "publishState": 2,
+      "star": 0,
+      "view": 0,
+      "id": 13
+    },
+    {
+      "content": "<p>铁锤</p>\n",
+      "title": "铁锤铁锤铁锤",
+      "categoryId": 3,
+      "region": "欧洲",
+      "roleId": 3,
+      "author": "铁锤",
+      "createTime": 1636036645106,
+      "auditState": 3,
+      "publishState": 0,
+      "star": 0,
+      "view": 0,
+      "id": 14
+    },
+    {
+      "content": "<p>2</p>\n",
+      "title": "钢蛋-管理员",
+      "categoryId": 1,
+      "region": "南极洲",
+      "roleId": 2,
+      "author": "钢蛋",
+      "createTime": 1636036902439,
+      "auditState": 1,
+      "publishState": 0,
+      "star": 0,
+      "view": 0,
+      "id": 16
+    },
+    {
+      "content": "<p>的</p>\n",
+      "title": "铁锤-南极洲",
+      "categoryId": 1,
+      "region": "南极洲",
+      "roleId": 3,
+      "author": "铁锤",
+      "createTime": 1636037061725,
+      "auditState": 1,
+      "publishState": 0,
+      "star": 0,
+      "view": 0,
+      "id": 17
+    },
+    {
+      "content": "<p>z</p>\n",
+      "title": "zzz",
+      "categoryId": 1,
+      "region": "欧洲",
+      "roleId": 3,
+      "author": "zz",
+      "createTime": 1636037194159,
+      "auditState": 1,
+      "publishState": 0,
+      "star": 0,
+      "view": 0,
+      "id": 18
     }
   ]
 }

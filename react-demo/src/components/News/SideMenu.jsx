@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Layout, Menu } from 'antd'
 import { withRouter } from 'react-router-dom'
+import { connect } from 'react-redux'
 
 import './index.scss'
 
@@ -52,7 +53,7 @@ function SideMenu(props) {
   const openKey = ['/' + selectedKey[0].split('/')[1]]
 
   return (
-    <Sider trigger={null} collapsible collapsed={false}>
+    <Sider trigger={null} collapsible collapsed={props.isCollapse}>
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <div className='logo'>新闻发布系统</div>
         <div style={{ flex: 1, overflow: 'auto' }}>
@@ -65,4 +66,9 @@ function SideMenu(props) {
   )
 }
 
-export default withRouter(SideMenu)
+const mapStateToProps = (state) => {
+  return {
+    isCollapse: state.CollapseReducer.isCollapse
+  }
+}
+export default connect(mapStateToProps)(withRouter(SideMenu))

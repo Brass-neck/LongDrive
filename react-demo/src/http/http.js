@@ -1,14 +1,33 @@
 import axios from 'axios'
+import { CHANGE_LOADING } from '../redux/constant'
+import { store } from '../redux/store'
 
 axios.defaults.baseURL = 'http://localhost:8080'
+
+axios.interceptors.request.use((config) => {
+  store.dispatch({
+    type: CHANGE_LOADING,
+    payload: true
+  })
+
+  return config
+})
 
 axios.interceptors.response.use(
   (response) => {
     if (response.status === 200 && response.statusText === 'OK') {
+      store.dispatch({
+        type: CHANGE_LOADING,
+        payload: false
+      })
       return response.data
     }
   },
   (error) => {
+    store.dispatch({
+      type: CHANGE_LOADING,
+      payload: false
+    })
     console.log('请求出错：', error)
   }
 )

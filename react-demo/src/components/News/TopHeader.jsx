@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { withRouter } from 'react-router-dom'
 import { Layout, Dropdown, Menu, Avatar } from 'antd'
 import { MenuUnfoldOutlined, MenuFoldOutlined, UserOutlined } from '@ant-design/icons'
+import { connect } from 'react-redux'
+import { CHANGE_COLLAPSE } from '../../redux/constant'
 
 const { Header } = Layout
 
 const TopHeader = (props) => {
-  const [collapse, setcollapse] = useState(false)
-
   const {
     username,
     role: { roleName }
@@ -29,10 +29,10 @@ const TopHeader = (props) => {
 
   return (
     <Header className='site-layout-background' style={{ padding: '0 16px' }}>
-      {collapse ? (
-        <MenuUnfoldOutlined onClick={() => setcollapse(false)} />
+      {props.isCollapse ? (
+        <MenuUnfoldOutlined onClick={() => props.changeCollapse()} />
       ) : (
-        <MenuFoldOutlined onClick={() => setcollapse(true)} />
+        <MenuFoldOutlined onClick={() => props.changeCollapse()} />
       )}
       面包屑导航
       <div style={{ float: 'right' }}>
@@ -47,4 +47,17 @@ const TopHeader = (props) => {
   )
 }
 
-export default withRouter(TopHeader)
+const mapStateToProps = (state) => {
+  return {
+    isCollapse: state.CollapseReducer.isCollapse
+  }
+}
+
+const mapDispatchToProps = {
+  changeCollapse() {
+    return {
+      type: CHANGE_COLLAPSE
+    }
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(TopHeader))
