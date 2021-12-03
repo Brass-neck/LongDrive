@@ -62,3 +62,22 @@ function memo(OldFunctionComponent) {
     }
   }
 }
+
+/**
+ * 手写 reselect 的 createSelector 原理
+ *
+ * @param {*} depSelectors 这个计算selector依赖的selector
+ * @param {*} compute 根据依赖进行计算的函数
+ * @returns
+ */
+function createSelector(depSelectors, compute) {
+  // 缓存
+  let lastValue
+  return function (state) {
+    // 判断依赖是否变化，变化了就走下面的重新计算，否则直接返回lastValue
+    let values = depSelectors.map((dep) => dep(state))
+    let result = compute(...values)
+    lastValue = result
+    return lastValue
+  }
+}

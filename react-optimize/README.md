@@ -59,6 +59,61 @@ const LazyHome = dynamicRoute(() => import(/*webpackPrefetch: true*/ './pages/Ho
 
 4. 使用 reselect 优化 redux
 
+   - redux 每次 dispatch 后，都会让注册的回调函数都执行一遍，导致性能浪费
+   - reselect 的出现就是为了避免一些不必要的 mapStateToProps 的计算，提升性能
+   - reselect 使用场景： ① 当组件中的 state 需要经过**复杂的计算**才能呈现在界面上 ② store 状态树庞大且层次较深
+
+<hr>
+
+### 大数据 异步加载优化
+
+当页面上渲染大量数据的时候，页面上的一些控件比如 input 框 就会失去响应，可以使用 `requestAnimationFrame（宏任务）`、`setTimeout`、`requestIdleCallback` 等进行时间切片的优化
+
+React 自己实现了一套 `requestIdleCallback` ，使用 `MessageChannel（宏任务）` 模拟的
+
+```js
+通过构造函数 MessageChannel() 可以创建一个消息通道，实例化的对象会继承两个属性：port1 和 port2
+
+// 1、port1 和 port2 可以进行通信
+const {port1, port2} = new MessageChannel()
+port1.onmessage = (msg)=>{}
+port2.onmessage = (msg)=>{}
+port1.postMessage('port1')
+port2.postMessage('port2')
+
+// 2、可以用于 web worker 的两个worker通信
+let worker1 = new Worker('./worker1.js')
+let worker2 = new Worker('./worker2.js')
+const {port1, port2} = new MessageChannel()
+worker1.postMessage('msg', [port1])   // 把 port1 分配给 worker1
+worker2.postMessage('msg', [port2])   // 把 port2 分配给 worker2
+worker1.onmessage = function(event) {
+    console.log(event.data);
+}
+worker2.onmessage = function(event) {
+    console.log(event.data);
+}
+
+// 3、通信的过程可以实现 深拷贝
+JSON.parse(JSON.stringify(object))的方式会忽略 undefined、function、symbol 和循环引用的对象
+通过MessageChannel的深拷贝只能解决 undefined 和循环引用对象的问题，对于 Symbol 和 function 依然束手无策
+
+function deepClone(obj) {
+  return new Promise((resolve, reject)=>{
+    const {port1, port2} = new MessageChannel()
+    port1.onmessage = (data) => resolve(data)
+    port2.postMessage(obj)
+  })
+}
+
+注意：该方法是异步的，因为 messageChannel是异步的
+let cloneObj = await deepClone(obj)
+```
+
+<hr>
+
+### 大数据 虚拟列表优化
+
 <hr>
 
 ### 其他

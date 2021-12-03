@@ -49,7 +49,22 @@ module.exports = ({ development, production }) => {
         chunks: 'all',
         minSize: 0,
         minChunks: 3 /**最小引入次数，被引入3次就抽离出来 */,
-        enforceSizeThreshold: 50000 /** w5新增，强制打包阈值，当一个包体积到达50k，就强制抽离，无视其他配置 */
+        enforceSizeThreshold: 50000 /** w5新增，强制打包阈值，当一个包体积到达50k，就强制抽离，无视其他配置 */,
+        cacheGroups: {
+          vendor: {
+            name: 'vendor', // chunk 名称
+            priority: 1, // 权限更高，优先抽离，重要！！！
+            test: /node_modules/, // 模块的路径
+            minSize: 0, // 大小限制
+            minChunks: 1 // 最少复用过几次，只要命中一次，就把他作为单独的模块
+          },
+          common: {
+            name: 'common', // chunk 名称
+            priority: 0, // 优先级
+            minSize: 0, // 公共模块的大小限制
+            minChunks: 2 // 公共模块最少复用过几次，引用两次及以上，把公共模块拆分
+          }
+        }
       },
       moduleIds: isProduction ? 'deterministic' : 'named',
       chunkIds: isProduction ? 'deterministic' : 'named'
@@ -111,16 +126,16 @@ module.exports = ({ development, production }) => {
               }
             : {}
         )
-      ),
-      new htmlWebpackExternalsPlugin({
-        externals: [
-          {
-            module: 'lodash',
-            entry: 'https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.20/lodash.js',
-            global: '_'
-          }
-        ]
-      })
+      )
+      // new htmlWebpackExternalsPlugin({
+      //   externals: [
+      //     {
+      //       module: 'lodash',
+      //       entry: 'https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.20/lodash.js',
+      //       global: '_'
+      //     }
+      //   ]
+      // })
     ]
   }
 }
