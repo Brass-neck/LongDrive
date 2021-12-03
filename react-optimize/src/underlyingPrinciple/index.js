@@ -81,3 +81,54 @@ function createSelector(depSelectors, compute) {
     return lastValue
   }
 }
+
+/**
+ *
+ * 手写 react-tiny-virtual-list 原理
+ *
+ */
+class VirtualList extends React.Component {
+  // 起始索引
+  state = { start: 0 }
+
+  // 容器
+  scrollBox = React.createRef()
+
+  handleScroll = () => {
+    const { itemSize } = this.props
+    const { scrollTop } = this.scrollBox.current
+    const start = Math.floor(scrollTop / itemSize)
+    this.setState({ start })
+  }
+
+  render() {
+    // 容器可视区 height, width
+    // itemCount 多少个条目；itemSize 每个条目的高度
+    // renderItem 每个条目的渲染函数
+    const { height, width, itemCount, itemSize, renderItem } = this.props
+
+    const { start } = this.state
+    let end = start + Math.floor(height / itemSize) + 1
+    end = end > itemCount ? itemCount : end
+
+    let ItemStyle = { position: 'absolute', left: 0, top: 0, widht: '100%', height: itemSize }
+
+    const visibleList = new Array(end - start)
+      .fill(0)
+      .map((item, index) => ({ index: index + start }))
+
+    return (
+      <div
+        ref={this.scrollBox}
+        style={{ overflow: 'auto', willChange: 'transform', height, width }}
+        onScroll={this.handleScroll}
+      >
+        <div style={{ position: 'relative', width: '100%', height: `${itemCount * itemSize}px` }}>
+          {visibleList.map(({ index }) =>
+            renderItem({ index, style: { ...ItemStyle, top: index * itemSize } })
+          )}
+        </div>
+      </div>
+    )
+  }
+}

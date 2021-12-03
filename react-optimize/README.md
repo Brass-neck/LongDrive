@@ -114,7 +114,60 @@ let cloneObj = await deepClone(obj)
 
 ### 大数据 虚拟列表优化
 
+#### 1、 CSS 页面渲染优化属性：will-change
+
+当我们通过某些行为(点击、移动或滚动)触发页面进行大面积绘制的时候，浏览器往往是没有准备的，只能被动使用 `CPU 去计算与重绘`，由于没有事先准备，应付渲染够呛，于是掉帧卡顿
+
+而 CSS 属性 `will-change` 为 web 开发者提供了一种告知浏览器该元素会有哪些变化的方法，这样浏览器可以在元素属性真正发生变化之前提前做好对应的优化准备工作。这种优化可以将一部分复杂的计算工作提前准备好，使页面的反应更为快速灵敏
+
+`GPU` 是图形处理器，专门处理和绘制图形相关的硬件。GPU 是专为执行复杂的数学和几何计算而设计的，使得 `CPU` 从图形处理的任务中解放出来，可以执行其他更多的系统任务
+
+所谓`硬件加速`，就是在计算机中把计算量非常大的工作分配给`专门的硬件`来处理，减轻 `CPU` 的工作量
+
+CSS 的动画、变形、渐变**并不会自动触发** `GPU 加速`，而是使用浏览器稍慢的软件渲染引擎
+
+只有 3D 变形会有自己的 layer，触发`GPU 加速`，而 2D 变形不会
+
+所以我们经常会使用一种 `hack方式`，使用`translateZ()` 或 `translate3d()`方法为元素添加没有变化的 3D 变形，骗取浏览器启用 `GPU 加速`，但是代价就是，创建了额外的图层，占用了 RAM 和 GPU 的存储空间，且无法确定空间释放时间
+
+```css
+/* 不要像这样，在元素上直接使用 will-change
+这样会导致浏览器将对应的优化工作一直保存在内存中，这其实是不必要的 */
+.will-change {
+  will-change: transform;
+  transition: transform 0.3s;
+}
+.will-change:hover {
+  transform: scale(1.5);
+}
+
+/* 在需要的时候才添加。可以让父元素hover的时候声明 will-change，这样在移出的时候就会remove */
+.will-change-parent:hover .will-change {
+  will-change: transform;
+}
+.will-change {
+  transition: transform 0.3s;
+}
+.will-change:hover {
+  transform: scale(1.5);
+}
+```
+
+```js
+// 通过js脚本准确的控制 will-change 属性
+let el = document.getElementById('element')
+el.addEventListener('mouseenter', openOpitimize)
+el.addEventListener('animationEnd', removeOpitimize)
+
+const openOpitimize = () => (this.style.willChange = 'transform, opacity') // 属性值填写动画中的改变
+const removeOpitimize = () => (this.style.willChange = 'auto')
+```
+
 <hr>
+
+#### 2、react-tiny-virtual-list 虚拟列表
+
+原理：定义每行高度，可视区高度，每次只渲染可视区内的内容，子元素通过`position: absolute`定位，上下各富余 3 个缓冲子元素，防止拖动太快有白屏
 
 ### 其他
 
