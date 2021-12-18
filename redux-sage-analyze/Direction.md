@@ -107,3 +107,13 @@ e.emit('click') // 不打印，因为只触发一次
 ### call
 
 `call(fn, ...args)` 表示：创建一个 Effect 描述信息，用来命令 middleware 以参数 args 调用函数 fn
+
+# redux-thunk
+
+redux 的 dispatch 原先只可以派发一个**纯对象**，使用了 redux-thunk 可以允许我们的 dispatch 派发一个函数，实现异步
+
+# redux-promise
+
+1. 允许我们 dispatch 一个 promise，但是这个 promise 成功、失败都会走原始的 dispatch，无法单独处理 reject 的情况
+
+2. 允许我们 dispatch 一个 对象， 但是对象的 payload 是一个 promise，可以单独处理 reject 的情况

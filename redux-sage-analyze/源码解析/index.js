@@ -58,6 +58,7 @@ function applyMiddleware(middleware) {
 // 完整版本 start
 
 // 把传入的函数数组从前往后进行嵌套调用
+// 源码版本
 function compose(...funcs) {
   if (funcs.length === 0) return (arg) => arg
   if (funcs.length === 1) return funcs[0]
@@ -67,6 +68,17 @@ function compose(...funcs) {
       (...args) =>
         a(b(...args))
   )
+}
+
+// 简单理解版本
+// compose2(add1, add2, add3)('hello')
+function compose2(...funcs) {
+  return function (args) {
+    for (let i = funcs.length - 1; i >= 0; i--) {
+      args = funcs[i](args)
+    }
+    return args
+  }
 }
 
 function applyMiddleware(...middlewares) {
@@ -110,3 +122,69 @@ function logger({ getState, dispatch }) {
 }
 
 let store = applyMiddleware(logger)(createStore)(reducer)
+
+/**
+ * 创建 saga 中间件的方法（redux中间件就是改造dispatch方法）
+ *
+ * @return - 返回一个 saga 中间件，中间件是一个3层函数，第一层参数是 store，第二层参数是 next（dispatch），最后一层是改造后的dispatch
+ * saga 中间件，有一个run方法，接收sagas迭代器并自动迭代
+ */
+
+import runSaga from './runSaga'
+
+function createSagaMiddleware() {
+  let boundRunSaga
+
+  function sagaMiddleware({ getState, dispatch }) {
+    let env = { getState, dispatch }
+    boundRunSaga = runSaga.bind(null, env)
+
+    // 返回一个中间件
+    return function (next) {
+      return function (action) {
+        // 这里改写了 dispatch 的逻辑
+
+        // 1. 先走原先的 dispatch 逻辑
+        let result = next(action)
+
+        // 2. 向仓库 dispatch action 会触发 take 的相关监听，channel需要emit，去触发 迭代器的next往下走
+        channel.emit(action)
+        return result
+      }
+    }
+  }
+
+  sagaMiddleware.run = (saga) => boundRunSaga(saga)
+
+  return sagaMiddleware
+}
+
+// ./runSaga
+function runSaga(env, saga) {
+  let { getState, dispatch } = env
+  let it = saga()
+
+  function next() {
+    let { value: effect, done } = it.next()
+    if (!done) {
+      // 这里处理各种不同逻辑，比如 put、take返回的指令对象
+      switch (effect.type) {
+        case 'TAKE':
+          // take是监听一次动作，动作发生了，才往后走next
+          // saga 里 是通过 channel 进行 发布/订阅
+          channel.once(effect.actionType, next)
+          break
+
+        case 'PUT':
+          // put 是 直接向 仓库 派发 action
+          dispatch(effect.action)
+          next()
+          break
+        default:
+          break
+      }
+    }
+  }
+
+  next()
+}
