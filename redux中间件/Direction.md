@@ -117,3 +117,21 @@ redux 的 dispatch 原先只可以派发一个**纯对象**，使用了 redux-th
 1. 允许我们 dispatch 一个 promise，但是这个 promise 成功、失败都会走原始的 dispatch，无法单独处理 reject 的情况
 
 2. 允许我们 dispatch 一个 对象， 但是对象的 payload 是一个 promise，可以单独处理 reject 的情况
+
+# connected-react-router
+
+- 描述：连接 redux 仓库 和 路由
+
+- 核心作用：
+
+  1. 通过派发动作，来跳转路径
+  2. 把 路径信息 保存到 redux 仓库中（数据同步）
+
+- 原理描述：
+
+  1. 通过 push 等方法派发 action 来跳转路由
+     通过 `connected-react-router` 中的 push 等方法跳转路径，push 方法会返回 actions 对象，应用 connected-react-router 的 `routerMiddleware` 中间件后，就可以拦截和解析 push 方法返回的 actions 对象，并且进行路由跳转
+
+  2. 同步路由数据到仓库
+     在`ConnectedRouter`组件中，通过 `history.listen`监听路由变化，并使用`store.dispatch(LOCATION_CHANGE)`把最新的路由更新到仓库中
+     在`connectRouter`这个 reducer 中，处理上一步的`LOCATION_CHANGE`action，更新仓库的 state
