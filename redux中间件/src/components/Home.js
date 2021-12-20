@@ -4,7 +4,7 @@ import actions from '../store/actions/home'
 
 class Home extends Component {
   render() {
-    // 从 actions 中解构出 actions 的各种方法
+    // 从 props 中解构出 actions 的各种方法
     const { goto } = this.props
 
     return (

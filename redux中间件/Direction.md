@@ -1,12 +1,30 @@
 # 描述
 
-本项目研究 redux-saga 的使用与原理
+本项目研究 redux 各种中间件的使用与原理
 
-# 概述
+# 关于迭代器的知识
 
-`redux-saga` 是一个 redux 的中间件，可以增强 redux 的功能，用于处理复杂的异步问题，可以进行复杂的流程管理（简单的流程可以使用 `redux-thunk` 管理）
+```js
+function* gen() {
+  yield 1
+  yield 2
+  yield 3
+  yield 4
+}
 
-### 关于中间件的知识
+let it = gen()
+it.next() // {value: 1, done: false}
+
+// 抛出错误，后面的都不能再执行了
+it.throw('抛出错误')
+it.next() // {value: undefined, done: true}
+
+// 提前结束，后面的都不能再执行了
+it.return('提前结束') // {value: '提前结束', done: true}
+it.next() // {value: undefined, done: true}
+```
+
+# 关于中间件的知识
 
 redux 的中间件原理，其实就是改造 dispatch 方法
 
@@ -40,7 +58,7 @@ store.dispatch = function () {
 }
 ```
 
-但是我们有一个更优雅的写法，类似于 **洋葱模型**
+但是我们有一个更优雅的写法，类似于 **洋葱模型**，中间件都是这个固定写法
 
 ```js
 // logger 原理
@@ -57,7 +75,11 @@ function logger({ getState, dispatch }) {
 }
 ```
 
-# 工作原理
+# redux-saga
+
+`redux-saga` 是一个 redux 的中间件，可以增强 redux 的功能，用于处理复杂的异步问题，可以进行复杂的流程管理（简单的流程可以使用 `redux-thunk` 管理）
+
+### 工作原理
 
 saga 里使用 `Generator` 函数 来 `yield` `effect`指令对象，用到了 `co库`
 
@@ -65,13 +87,15 @@ saga 里使用 `Generator` 函数 来 `yield` `effect`指令对象，用到了 `
 - Effect 是一个简单对象，包含了一些给 middleware 解释执行的信息
 - 可以通过 effect API 比如 fork、call、take、put、cancel 来创建 effect
 
-# saga 的分类
+<hr>
+
+### saga 的分类
 
 - worker saga 做工作的 sage，比如进行异步请求、获取异步封装结果等
 - watcher saga，监听被 dispatch 的 action，当接收到 action 或者知道其被触发时，调用 worker 执行任务
 - root saga 唯一的入口 saga
 
-# API
+<hr>
 
 ### take
 
@@ -107,6 +131,68 @@ e.emit('click') // 不打印，因为只触发一次
 ### call
 
 `call(fn, ...args)` 表示：创建一个 Effect 描述信息，用来命令 middleware 以参数 args 调用函数 fn
+
+<hr>
+
+### select
+
+创建一个 Effect，用来命令 middleware 在当前 Store 的 state 上调用指定的选择器
+
+如果调用 select 的参数为空（即 `yield select()`），那么 effect 会取得完整的 state（与调用 `getState()` 的结果相同）
+
+```js
+import { select } from 'redux-saga/effects'
+const number = yield select(state => state.number)
+```
+
+<hr>
+
+### fork
+
+创建一个 Effect 描述信息，用来命令 middleware 以 **非阻塞调用** 的形式执行 fn
+
+- fork 意味着 开启一个 **新的子进程（子进程是一个比喻）**，来执行 fn
+
+- 返回值是一个 **task**（Task 接口）
+
+<hr>
+
+### takeEvery(pattern, saga)
+
+在 dispatch action 到 Store 的时候，匹配 pattern 的每一个 action 都会派生一个 saga，也就是无限次的 take **（take 只触发一次，相当于 once，takeEvery 会被触发无限次）**
+
+```js
+// takeEvery 是高级 API，是由基础的辅助函数构建的
+// takeEvery 是由 take 和 fork 构建的
+const takeEvery = (patternOrChannel, saga, ...args) =>
+  fork(function* () {
+    while (true) {
+      const action = yield take(patternOrChannel)
+      yield fork(saga, ...args.concat(action))
+    }
+  })
+```
+
+<hr>
+
+### Task（接口）
+
+Task 接口指定了通过 `fork`，`middleare.run` 或 `runSaga` 运行 Saga 的结果
+
+<hr>
+
+### cancel(task)
+
+创建一个 Effect 描述信息，用来命令 middleware 取消之前的一个分叉任务
+
+```js
+function* mySaga() {
+  const task = yield fork(myApi)
+  // ... 过一会儿儿
+  // 将会调用 myApi 上的 promise[CANCEL]
+  yield cancel(task)
+}
+```
 
 # redux-thunk
 

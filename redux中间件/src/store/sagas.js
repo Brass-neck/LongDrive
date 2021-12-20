@@ -25,5 +25,9 @@ function* workerSaga() {
 }
 
 function* rootSaga2() {
+  console.log('rootSaga start')
+  // 开启一个新的saga，相当于开启了新的进程，新的进程和本进程无关
+  // 所以，执行了 rootSaga2，start 和 end 都会 打印，并不会被 watcherSaga 里的 take 阻塞
   yield watcherSaga()
+  console.log('rootSaga end')
 }
