@@ -42,18 +42,6 @@ module-project 会被链接到 test-project/node_modules 下面，在 test-proje
 # 解除link
 解除项目和模块link，项目目录下，npm unlink 模块名
 解除模块全局link，模块目录下，npm unlink 模块名
-
-# 返回全局包node_modules目录
-npm root -g # /usr/local/lib/node_modules
-
-
-# 设置和获取全局包目录
-npm config set prefix “D:\nodejs\node_global”
-npm config get prefix # /usr/local
-
-
-# 设置缓存目录
-npm config set cache “D:\nodejs\node_cache”
 ```
 
 ## 另一种调试本地模块的方案
