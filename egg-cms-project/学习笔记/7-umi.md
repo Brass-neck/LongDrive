@@ -4,7 +4,9 @@
 npm i -g umi
 ```
 
-### 路由
+# 路由
+
+### layout 布局路由
 
 > layouts/index.js 是约定式路由时的**全局布局文件**，`pages` 下的路由组件会以`this.props.children`的形式展示在 layouts/index.js 中
 
@@ -27,3 +29,40 @@ npm i -g umi
   }
 ]
 ```
+
+<hr>
+
+### 权限路由
+
+通过指定高阶组件 `wrappers` 达成效果
+
+```js
+// src/pages/user
+
+import React from 'react'
+
+function User() {
+  return <>user profile</>
+}
+
+User.wrappers = ['@/wrappers/auth']
+
+export default User
+
+/////////////////////
+// src/wrappers/auth
+
+import { Redirect } from 'umi'
+
+export default (props)=>{
+  const { isLogin } = useAuth()
+
+  if (isLogin) {
+    return <div>{ props.children }</div>;
+  } else {
+    return <Redirect to='/login' />
+  }
+}
+```
+
+root saga watcher saga
