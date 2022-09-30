@@ -166,3 +166,32 @@ console.log(buf.buffer) // ArrayBuffer { [Uint8Contents]: <00 00 00 00 00>, byte
    console.log('buff: ', buff)
    // buff:  <Buffer 06 05 00 00 00>
    ```
+
+## 三、使用 Buffer
+
+使用 Buffer 创建可读流、可写流，处理 I/O
+
+```js
+const fs = require('fs')
+// 假设 1.txt 是中文内容
+const rs = fs.createReadStream('./1.txt', { highWaterMark: 11 })
+
+let data = ''
+
+rs.on('data', (chunk) => {
+  // 这里会存在隐式转换的逻辑
+  data += chunk
+  // 相当于 data.toString() + chunk.toString()
+})
+rs.on('end', () => {
+  console.log(data)
+})
+```
+
+**中文乱码问题**
+
+`highWaterMark` 是设置可读流每次读取的 Buffer 的长度，如果设置了这个值，并且在读的是**中文**，可能会导致乱码问题
+
+`buf.toString()` 方法默认以 `UTF-8` 为编码，**中文字在 UTF-8 下占 3 个字节**
+
+所以，长度为 11 的 Buffer 每次只能读取 2 个中文（3\*3=9 字节） + 2 字节乱码
