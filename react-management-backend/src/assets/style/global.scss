@@ -1,0 +1,11 @@
+$color: #fef;
+body {
+  background-color: $color;
+}
+
+#virtual {
+  color: red;
+  &::before {
+    content: 'haha';
+  }
+}
