@@ -1,0 +1,23 @@
+{
+    "name": "orillusion-webgpu-samples",
+    "version": "0.1.0",
+    "author": "Orillusion",
+    "description": "Orillusion webgpu vite template & samples",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Orillusion/orillusion-webgpu-samples.git"
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build --config vite.config.github.js",
+        "preview": "vite preview"
+    },
+    "devDependencies": {
+        "@webgpu/types": "^0.1.21",
+        "typescript": "^4.5.4",
+        "vite": "^3.0.9"
+    },
+    "dependencies": {
+        "gl-matrix": "^3.4.3"
+    }
+}
