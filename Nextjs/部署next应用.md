@@ -110,3 +110,67 @@ yarn install --production --ignore-scripts --prefer-offline
 ```shell
 next build && next export
 ```
+
+# 三、部署到 vercel
+
+在云计算中，术语 "边缘" 功能是指，位于或靠近网络边缘的计算能力，通常更靠近数据源
+
+边缘功能用于在靠近生成位置的地方处理数据，而不是将所有数据发送到集中式云进行处理。这减少了数据传输所需的延迟和带宽，并可以提高基于云的应用程序的效率、可扩展性和安全性
+
+部署在 Vercel 上的无服务器功能在位于世界某个地方的服务器上运行。对函数的请求在服务器上执行。如果请求来自靠近服务器的位置，则速度很快。但是，如果它来自很远的地方，则响应速度较慢
+
+Edge Functions 解决了这个问题。简而言之，Edge Functions 是在**靠近用户的地方运行**的无服务器功能，无论用户身在何处，都能产生快速请求
+
+### 步骤如下：
+
+1. 创建一个新的 Next.js 13 项目
+
+```shell
+$ npx create-next-app@latest --experimental-app
+```
+
+2. 添加新的 API 路由
+
+   在默认项目结构的 `pages/api` 文件夹中创建一个新文件
+
+```js
+import { NextRequest, NextResponse } from 'next/server'
+
+const handler = (req: NextRequest) => {
+  return NextResponse.json({
+    name: `Hello, from ${req.url} I'm now an Edge Function!`
+  })
+}
+
+export default handler
+```
+
+3. 设置 Edge Runtime
+
+```js
+import { NextRequest, NextResponse } from 'next/server'
+
+export const config = {
+  runtime: 'edge'
+}
+
+const handler = (req: NextRequest) => {
+  return NextResponse.json({
+    name: `Hello, from ${req.url} I'm now an Edge Function!`
+  })
+}
+
+export default handler
+```
+
+4. 部署到 vercel
+
+首先在 vercel.com 上注册一个免费帐户，以便您能够访问仪表板
+
+```shell
+$ npm i -g vercel@latest
+
+# 在 next 项目中执行
+$ vercel deploy
+# 登录 vercel 账号
+```
