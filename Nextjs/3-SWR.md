@@ -1,5 +1,0 @@
-# SWR
-
-```js
-import useSWR
-```
